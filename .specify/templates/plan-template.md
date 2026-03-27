@@ -38,6 +38,8 @@
 - **Minimal Structure**: Does the plan avoid adding `domain/`, `application/`, `agents/`, or repositories unless the feature needs them?
 - **Observable Operations**: Are state changes, tool interactions, and persistence paths inspectable and deterministic?
 - **Testable Increments**: Can the feature ship as a vertical slice with targeted tests before broader expansion?
+- **Invariant Enforcement**: Are all stated invariants mapped to planned validations, guards, or policies in implementation?
+- **Layer Ownership**: For each planned module, is ownership explicit (domain, application, infrastructure, interface) with no business rules in adapters?
 
 ## Project Structure
 
@@ -79,7 +81,7 @@ tests/
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real
-directories captured above. Explicitly state which DDD layers are required for this feature and why.]
+directories captured above. Explicitly state which DDD layers are required for this feature and why. If a feature keeps the minimal core, explain why adding `domain/` or `application/` would be unnecessary complexity.]
 
 ## Complexity Tracking
 

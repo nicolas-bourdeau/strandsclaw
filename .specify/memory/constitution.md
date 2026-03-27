@@ -1,10 +1,16 @@
 <!--
 Sync Impact Report
-- Version change: template -> 1.0.0
-- Modified principles: placeholder template -> concrete project principles
-- Added sections: Architecture Boundaries, Delivery Workflow
+- Version change: 1.1.0 -> 1.1.1
+- Modified principles:
+	- I. Spec-Driven Delivery -> I. Spec-Driven Delivery (clarified scope and backfill rule)
+	- V. Testable Increments -> V. Testable Increments (tightened testing requirement for behavior changes)
+- Added sections: none
 - Removed sections: none
-- Templates requiring updates: ✅ `.github/copilot-instructions.md`, ⚠ `README.md` is aligned by prose rather than template mutation
+- Templates requiring updates:
+	- ✅ /home/nbourdeau/dev/strandsclaw/.specify/templates/plan-template.md (reviewed, aligned)
+	- ✅ /home/nbourdeau/dev/strandsclaw/.specify/templates/spec-template.md (reviewed, aligned)
+	- ✅ /home/nbourdeau/dev/strandsclaw/.specify/templates/tasks-template.md (reviewed, aligned)
+	- ⚠ /home/nbourdeau/dev/strandsclaw/.specify/templates/commands/*.md (directory not present in this repository)
 - Deferred items: none
 -->
 
@@ -14,7 +20,7 @@ Sync Impact Report
 
 ### I. Spec-Driven Delivery
 
-All meaningful feature work MUST start with Spec Kit artifacts in `specs/`. Work SHOULD progress through constitution, specification, clarification, plan, tasks, analysis, and implementation in that order. Code-first changes are allowed only for trivial fixes or toolchain repairs and MUST be reflected back into specs when they affect behavior.
+All meaningful feature work MUST start with Spec Kit artifacts in `specs/`. Work MUST progress through constitution, specification, clarification, plan, tasks, analysis, and implementation in that order. Code-first changes are allowed only for trivial fixes or toolchain repairs and MUST be reflected back into specs before merge when they affect behavior.
 
 ### II. Domain-Driven Boundaries
 
@@ -32,7 +38,7 @@ Agent behavior MUST be inspectable through structured logging, explicit tool reg
 
 ### V. Testable Increments
 
-Every implemented slice MUST be independently testable and aligned with a user-visible or operator-visible outcome. New modules SHOULD ship with targeted tests for domain logic, state handling, or construction paths before broader orchestration is expanded.
+Every implemented slice MUST be independently testable and aligned with a user-visible or operator-visible outcome. Any change that introduces or modifies domain logic, invariants, state transitions, or persistence behavior MUST include targeted tests before broader orchestration is expanded.
 
 ## Architecture Boundaries
 
@@ -63,6 +69,12 @@ Prefer minimal vertical slices over scaffolding every future phase at once.
 ## Governance
 
 This constitution supersedes ad hoc local preferences for repository-wide decisions.
-Changes to these principles require a documented rationale and an update to the affected guidance files.
-Code review and agent-driven changes MUST verify compliance with DDD boundaries, spec-driven workflow, and testable increments.
-**Version**: 1.1.0 | **Ratified**: 2026-03-27 | **Last Amended**: 2026-03-27
+Amendments MUST be proposed in writing, include rationale and impact, and update the affected guidance files in the same change (`AGENTS.md`, `.github/copilot-instructions.md`, and relevant Spec Kit templates when applicable).
+Versioning policy for this constitution follows semantic versioning:
+- MAJOR: backward-incompatible governance or principle removals/redefinitions.
+- MINOR: new principle or materially expanded mandatory guidance.
+- PATCH: clarifications, wording fixes, and non-semantic refinements.
+Compliance review expectations:
+- Every plan MUST pass the Constitution Check before Phase 0 research and again after Phase 1 design.
+- Code review and agent-driven changes MUST verify compliance with DDD boundaries, spec-driven workflow, observability expectations, and testable increments.
+**Version**: 1.1.1 | **Ratified**: 2026-03-27 | **Last Amended**: 2026-03-27

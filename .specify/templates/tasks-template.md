@@ -25,6 +25,7 @@ description: "Task list template for feature implementation"
 - Do not create `domain/`, `application/`, repositories, or domain services unless the plan explicitly calls for them.
 - Keep business rules out of CLI handlers, Strands tooling glue, and persistence adapters.
 - When a story changes state or invariants, include tests that exercise the relevant business behavior.
+- Add at least one explicit task to verify invariant enforcement and layer ownership before story sign-off.
 
 ## Path Conventions
 
@@ -75,6 +76,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T006 [P] Create base domain types only if multiple stories truly depend on them
 - [ ] T007 Define adapter interfaces or persistence seams only if they are required before story work starts
 - [ ] T008 Document structure decisions that affect all stories
+- [ ] T009 Add DDD compliance checks mapping invariants to tests and confirming layer ownership boundaries
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -256,3 +258,4 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+- Avoid: anemic domain files, adapter-centric business logic, and speculative repositories/services without plan justification

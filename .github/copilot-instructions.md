@@ -25,6 +25,18 @@ During `/speckit.plan`, decide whether the feature stays within the minimal core
 During implementation, keep business rules out of CLI, Strands integration glue, and persistence adapters.
 Only add DDD layers when the active feature requires them, and justify the addition in the plan and tasks artifacts.
 
+## DDD Enforcement Checklist
+
+For meaningful feature work, Copilot MUST verify and preserve the following:
+
+1. `spec.md` names bounded context, ubiquitous language, invariants, and external boundaries.
+2. `plan.md` includes an explicit decision on whether the feature stays in the minimal core or adds `domain/` and `application/`.
+3. Business rules are not implemented in CLI glue, Strands integration glue, or persistence adapters.
+4. Domain invariants are reflected in code paths that enforce or validate them.
+5. Changes that alter domain logic, state transitions, or persistence behavior include targeted tests.
+
+Copilot SHOULD block or revise proposals that introduce speculative DDD scaffolding or place domain behavior in infrastructure or interface modules.
+
 ## Security and Privacy
 This is a public repository: do not commit secrets, API keys, tokens, passwords, private keys, or machine-specific absolute paths.
 Use portable relative paths and environment variables for local configuration.

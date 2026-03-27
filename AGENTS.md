@@ -38,6 +38,23 @@ Introduce `src/strandsclaw/domain` only when a feature needs explicit domain typ
 Introduce `src/strandsclaw/application` only when use-case orchestration becomes distinct from interface or infrastructure concerns.
 Infrastructure may depend on domain types; domain code must not depend on infrastructure or interface modules.
 
+## DDD Enforcement Checklist
+
+For any meaningful feature, reviewers and AI agents MUST confirm all items below before merge:
+
+1. Bounded context is named in `specs/<feature>/spec.md` and carried into `plan.md`.
+2. Ubiquitous language terms are defined and used consistently in specs and code naming.
+3. Domain invariants are explicit and mapped to validations or guards in implementation.
+4. Business rules live in domain or application code, never in CLI handlers, workspace bootstrap, or state adapters.
+5. If `domain/` or `application/` is introduced or expanded, the plan explains why minimal-core placement is insufficient.
+6. State-changing behavior has targeted tests that validate invariants and transitions.
+
+The following are forbidden without explicit plan justification:
+
+- Anemic "domain" files that only mirror transport or persistence models.
+- Feature logic embedded directly in `interfaces/`, `bootstrap/`, or `infrastructure/state/`.
+- New repositories or services added because of anticipated future use instead of active requirements.
+
 ## Public Repo Hygiene
 
 This repository is public: never commit secrets, tokens, passwords, API keys, private keys, or machine-specific absolute paths.
