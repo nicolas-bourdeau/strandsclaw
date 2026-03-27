@@ -1,5 +1,5 @@
 ---
-description: Identify underspecified areas in the current feature spec by asking up to 5 highly targeted clarification questions and encoding answers back into the spec.
+description: Identify underspecified areas in the current feature spec by asking up to 5 highly targeted clarification questions, stating each question explicitly before any recommendation or options, and encoding answers back into the spec.
 handoffs: 
   - label: Build Technical Plan
     agent: speckit.plan
@@ -108,12 +108,14 @@ Execution steps:
 4. Sequential questioning loop (interactive):
     - Present EXACTLY ONE question at a time.
     - For multiple‑choice questions:
+       - State the exact clarification first as a standalone line before any recommendation or options.
+       - Format the opening line as: `Question: <question text>`
        - **Analyze all options** and determine the **most suitable option** based on:
           - Best practices for the project type
           - Common patterns in similar implementations
           - Risk reduction (security, performance, maintainability)
           - Alignment with any explicit project goals or constraints visible in the spec
-       - Present your **recommended option prominently** at the top with clear reasoning (1-2 sentences explaining why this is the best choice).
+       - After the question line, present your **recommended option prominently** with clear reasoning (1-2 sentences explaining why this is the best choice).
        - Format as: `**Recommended:** Option [X] - <reasoning>`
        - Then render all options as a Markdown table:
 
@@ -126,7 +128,9 @@ Execution steps:
 
        - After the table, add: `You can reply with the option letter (e.g., "A"), accept the recommendation by saying "yes" or "recommended", or provide your own short answer.`
     - For short‑answer style (no meaningful discrete options):
-       - Provide your **suggested answer** based on best practices and context.
+       - State the exact clarification first as a standalone line before any suggestion.
+       - Format the opening line as: `Question: <question text>`
+       - After the question line, provide your **suggested answer** based on best practices and context.
        - Format as: `**Suggested:** <your proposed answer> - <brief reasoning>`
        - Then output: `Format: Short answer (<=5 words). You can accept the suggestion by saying "yes" or "suggested", or provide your own answer.`
     - After the user answers:
@@ -186,5 +190,6 @@ Behavior rules:
 - Respect user early termination signals ("stop", "done", "proceed").
 - If no questions asked due to full coverage, output a compact coverage summary (all categories Clear) then suggest advancing.
 - If quota reached with unresolved high-impact categories remaining, explicitly flag them under Deferred with rationale.
+- Never lead with recommendation text or an options table before the explicit question line.
 
 Context for prioritization: $ARGUMENTS
