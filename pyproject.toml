@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=82", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "strandsclaw"
+version = "0.1.0"
+description = "A pure Python, Strands-based OpenClaw-style agent workspace"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "pyyaml>=6.0",
+  "pytest>=9.0",
+  "strands-agents==1.33.0",
+]
+
+[project.scripts]
+strandsclaw = "strandsclaw.interfaces.cli:main"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

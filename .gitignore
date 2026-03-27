@@ -1,0 +1,14 @@
+.venv/
+.workspace/
+__pycache__/
+.pytest_cache/
+.coverage
+.mypy_cache/
+.ruff_cache/
+.state/
+dist/
+build/
+*.egg-info/
+*.pyc
+*.pyo
+*.pyd
