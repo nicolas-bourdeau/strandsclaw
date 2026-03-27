@@ -8,7 +8,7 @@ description: "Task list template for feature implementation"
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Tests**: The examples below include test tasks. Tests are OPTIONAL unless required by the specification, the constitution, or the risk level of the domain behavior.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -17,6 +17,14 @@ description: "Task list template for feature implementation"
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
 - Include exact file paths in descriptions
+
+## DDD Task Rules
+
+- Group tasks by user story and keep each story independently testable.
+- Within a story, prefer the order: domain rules and types, application orchestration, infrastructure adapters, then interface wiring.
+- Do not create `domain/`, `application/`, repositories, or domain services unless the plan explicitly calls for them.
+- Keep business rules out of CLI handlers, Strands tooling glue, and persistence adapters.
+- When a story changes state or invariants, include tests that exercise the relevant business behavior.
 
 ## Path Conventions
 
@@ -56,18 +64,17 @@ description: "Task list template for feature implementation"
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
+**Purpose**: Core infrastructure and shared prerequisites that MUST be complete before ANY user story can be implemented
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T004 Establish shared configuration or workspace contracts used by all stories
+- [ ] T005 [P] Add shared state, logging, or error handling support required across stories
+- [ ] T006 [P] Create base domain types only if multiple stories truly depend on them
+- [ ] T007 Define adapter interfaces or persistence seams only if they are required before story work starts
+- [ ] T008 Document structure decisions that affect all stories
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -88,12 +95,12 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T012 [P] [US1] Add domain type or rule in src/strandsclaw/domain/[feature].py
+- [ ] T013 [US1] Add use-case orchestration in src/strandsclaw/application/[feature].py
+- [ ] T014 [US1] Add adapter or state integration in src/strandsclaw/infrastructure/[feature].py
+- [ ] T015 [US1] Wire the story through src/strandsclaw/interfaces/[feature].py
+- [ ] T016 [US1] Add validation, invariant enforcement, and error handling
+- [ ] T017 [US1] Add logging or observability for user story 1 operations
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -112,10 +119,10 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T020 [P] [US2] Add or extend domain behavior in src/strandsclaw/domain/[feature].py
+- [ ] T021 [US2] Implement use-case flow in src/strandsclaw/application/[feature].py
+- [ ] T022 [US2] Implement adapter or interface wiring in src/strandsclaw/[location]/[file].py
+- [ ] T023 [US2] Integrate with User Story 1 components only through approved interfaces
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -134,9 +141,9 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T026 [P] [US3] Add or extend domain behavior in src/strandsclaw/domain/[feature].py
+- [ ] T027 [US3] Implement use-case flow in src/strandsclaw/application/[feature].py
+- [ ] T028 [US3] Implement adapter or interface wiring in src/strandsclaw/[location]/[file].py
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -179,8 +186,8 @@ Examples of foundational tasks (adjust based on your project):
 ### Within Each User Story
 
 - Tests (if included) MUST be written and FAIL before implementation
-- Models before services
-- Services before endpoints
+- Domain rules before application orchestration
+- Application orchestration before adapter or interface wiring
 - Core implementation before integration
 - Story complete before moving to next priority
 

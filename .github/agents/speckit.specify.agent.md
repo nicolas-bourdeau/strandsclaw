@@ -10,6 +10,18 @@ handoffs:
     send: true
 ---
 
+## Repository-Specific Guidance
+
+- Treat StrandsClaw as a workspace-first Python runtime with a deliberately minimal core.
+- During specification, explicitly capture bounded context, ubiquitous language, invariants, and external boundaries.
+- Prefer domain terminology over technical implementation wording.
+- Keep the spec focused on user-visible or operator-visible behavior, not framework structure.
+- When the feature touches workspace bootstrapping, skill discovery, or state files, describe the business effect separately from the adapter or file mechanism.
+- Do not assume `domain/`, `application/`, `agents/`, repositories, or domain events are needed unless the feature clearly requires them.
+- If a feature may justify new DDD layers, state that as a planning concern in assumptions or boundaries rather than baking it into the spec structure.
+- When requirements mention state changes, include the invariant or rule that must remain true across those transitions.
+- When requirements depend on external tools or user workspace contents, name those as external boundaries.
+
 ## User Input
 
 ```text

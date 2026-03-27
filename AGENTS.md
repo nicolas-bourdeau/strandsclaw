@@ -14,6 +14,9 @@ The top-level `specs/` directory is reserved for Spec Kit feature artifacts.
 Use Spec Kit for meaningful feature work.
 Create or update constitution, specification, clarification, plan, and tasks artifacts before large implementation changes.
 Treat `project_plan.md` as background context, but let `specs/<feature>/` become the source of truth for active work.
+During specification, capture bounded context, ubiquitous language, invariants, and external boundaries for the feature.
+During planning, decide whether the feature can stay within the minimal core or whether it justifies explicit `domain/` and `application/` layers.
+During task generation and implementation, keep work organized as independently testable vertical slices.
 When a change affects architecture or conventions, update this file, `.github/copilot-instructions.md`, and the relevant spec artifacts together.
 
 ## Build And Test
@@ -30,6 +33,10 @@ Avoid adding framework-specific wrappers before they are needed.
 Use JSON-serializable state in `.state/` through the file-backed store instead of ad hoc files.
 When adding tools or hooks later, keep them isolated in infrastructure adapters.
 When adding new default skills, place them in `workspace-template/skills/<skill-name>/SKILL.md`.
+Keep business rules out of CLI handlers, workspace bootstrapping, and persistence adapters.
+Introduce `src/strandsclaw/domain` only when a feature needs explicit domain types, invariants, or services.
+Introduce `src/strandsclaw/application` only when use-case orchestration becomes distinct from interface or infrastructure concerns.
+Infrastructure may depend on domain types; domain code must not depend on infrastructure or interface modules.
 
 ## Public Repo Hygiene
 

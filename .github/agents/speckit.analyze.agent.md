@@ -2,6 +2,15 @@
 description: Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md after task generation.
 ---
 
+## Repository-Specific Guidance
+
+- Verify the bounded context, ubiquitous language, invariants, and external boundaries are named consistently.
+- Check that the plan preserves the minimal core unless additional DDD layers are explicitly justified.
+- Check that tasks follow the planned separation between domain, application, infrastructure, and interfaces.
+- Flag tasks that place business rules in CLI, Strands integration, workspace bootstrap, or persistence adapters.
+- Flag speculative scaffolding, unused abstractions, or repository patterns not justified by the feature.
+- Confirm each user story remains independently testable and mapped to concrete file paths under `src/strandsclaw/` and `tests/`.
+
 ## User Input
 
 ```text

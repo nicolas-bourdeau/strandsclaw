@@ -20,6 +20,10 @@ Keep runtime code lean and remove scaffolding not tied to current features.
 Place durable file-backed state behavior in `src/strandsclaw/infrastructure/state`.
 Use file-backed JSON state through the shared state store rather than ad hoc persistence.
 Prefer spec-backed, incremental changes over broad scaffolding.
+During `/speckit.specify`, define bounded context, ubiquitous language, invariants, and external boundaries.
+During `/speckit.plan`, decide whether the feature stays within the minimal core or justifies `domain/` and `application/` layers.
+During implementation, keep business rules out of CLI, Strands integration glue, and persistence adapters.
+Only add DDD layers when the active feature requires them, and justify the addition in the plan and tasks artifacts.
 
 ## Security and Privacy
 This is a public repository: do not commit secrets, API keys, tokens, passwords, private keys, or machine-specific absolute paths.

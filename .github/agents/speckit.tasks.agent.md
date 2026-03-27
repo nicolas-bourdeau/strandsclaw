@@ -11,6 +11,16 @@ handoffs:
     send: true
 ---
 
+  ## Repository-Specific Guidance
+
+  - Generate tasks as independently testable vertical slices tied to user stories.
+  - Within a story, prefer the order: domain rules and types, application orchestration, infrastructure adapters, interface wiring.
+  - Do not create tasks for `domain/`, `application/`, repositories, or agent assembly unless plan.md explicitly justifies them.
+  - Keep business logic tasks separate from CLI, workspace bootstrap, Strands glue, and persistence adapter tasks.
+  - When a story changes file-backed state or workspace contents, include validation tasks that verify idempotence, serialization, and operator-visible outcomes.
+  - Use real repository paths under `src/strandsclaw/` and `tests/`; avoid generic `src/models` or `src/services` paths unless the plan explicitly chooses them.
+  - Prefer one thin task per concrete behavior over large umbrella tasks.
+
 ## User Input
 
 ```text

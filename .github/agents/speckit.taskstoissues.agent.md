@@ -3,6 +3,15 @@ description: Convert existing tasks into actionable, dependency-ordered GitHub i
 tools: ['github/github-mcp-server/issue_write']
 ---
 
+## Repository-Specific Guidance
+
+- Preserve user-story grouping and vertical-slice sequencing.
+- Make issue titles explicit about the affected behavior and main file area.
+- Call out when an issue introduces or extends `domain/`, `application/`, `infrastructure/`, or `interfaces` responsibilities.
+- Avoid creating issues for speculative scaffolding or unjustified abstractions.
+- Include acceptance or verification notes that match the feature's independent test criteria.
+- Include public-repo hygiene reminders only when the issue touches config, docs, or generated assets.
+
 ## User Input
 
 ```text

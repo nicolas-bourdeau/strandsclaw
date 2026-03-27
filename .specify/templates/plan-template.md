@@ -26,12 +26,18 @@
 **Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
 **Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
 **Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Bounded Context**: [Domain area named in spec.md]
+**DDD Impact**: [Does this feature stay within the current minimal core, or does it justify adding `domain/`, `application/`, or other layers?]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- **Spec-Driven Delivery**: Does the spec name the bounded context, domain language, invariants, and independently testable stories?
+- **Domain-Driven Boundaries**: Are business rules isolated from CLI, Strands integration, filesystem access, and transport details?
+- **Minimal Structure**: Does the plan avoid adding `domain/`, `application/`, `agents/`, or repositories unless the feature needs them?
+- **Observable Operations**: Are state changes, tool interactions, and persistence paths inspectable and deterministic?
+- **Testable Increments**: Can the feature ship as a vertical slice with targeted tests before broader expansion?
 
 ## Project Structure
 
@@ -56,49 +62,30 @@ specs/[###-feature]/
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+src/strandsclaw/
+├── bootstrap/
+├── interfaces/
+├── workspace/
+├── infrastructure/
+│   └── state/
+├── domain/           # Add only if this feature needs explicit domain types/rules
+├── application/      # Add only if this feature needs use-case orchestration
+└── agents/           # Add only if agent assembly exceeds interface wiring
 
 tests/
-├── contract/
+├── unit/
 ├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+└── contract/
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+directories captured above. Explicitly state which DDD layers are required for this feature and why.]
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
+| --------- | ---------- | ----------------------------------- |
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |

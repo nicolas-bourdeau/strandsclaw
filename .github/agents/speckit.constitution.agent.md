@@ -6,6 +6,15 @@ handoffs:
     prompt: Implement the feature specification based on the updated constitution. I want to build...
 ---
 
+## Repository-Specific Guidance
+
+- Support progressive DDD rather than mandatory scaffolding.
+- Keep spec-driven delivery mandatory for meaningful feature work.
+- Require bounded context, domain language, invariants, and external boundaries to be explicit.
+- Preserve the current minimal-core posture unless a concrete feature justifies richer DDD layers.
+- Define clear responsibility boundaries for domain, application, infrastructure, and interfaces without forcing all of them to exist immediately.
+- Keep pure Python runtime constraints, observable operations, testable increments, and public-repo hygiene intact.
+
 ## User Input
 
 ```text

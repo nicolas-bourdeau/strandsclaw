@@ -75,6 +75,30 @@
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
 
+## Domain Framing *(mandatory for meaningful feature work)*
+
+### Bounded Context
+
+- **Bounded Context**: [Name the domain area this feature belongs to]
+- **Context Fit**: [Explain whether this extends an existing context or introduces a new one]
+
+### Ubiquitous Language
+
+- **Term**: [Canonical domain term]
+- **Definition**: [Meaning used consistently in specs and code]
+
+[Add more terms as needed]
+
+### Domain Invariants
+
+- **INV-001**: [Rule that must always hold true]
+- **INV-002**: [Rule that protects business behavior or state transitions]
+
+### External Boundaries
+
+- **Upstream Systems**: [Services, files, tools, or user inputs this feature depends on]
+- **Anti-Corruption Needs**: [Translation or protection needed between external representations and domain concepts]
+
 ## Requirements *(mandatory)*
 
 <!--
@@ -97,8 +121,8 @@
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+- **[Entity or Aggregate 1]**: [What it represents, key attributes, and important invariants]
+- **[Entity, Value Object, or Aggregate 2]**: [What it represents and how it relates to other domain concepts]
 
 ## Success Criteria *(mandatory)*
 
