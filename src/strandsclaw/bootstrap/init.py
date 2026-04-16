@@ -6,13 +6,21 @@ from pathlib import Path
 from strandsclaw.config import AppConfig, load_config
 
 
+class BootstrapError(RuntimeError):
+    pass
+
+
 def bootstrap_workspace(config: AppConfig | None = None) -> list[Path]:
     resolved = config or load_config()
     created: list[Path] = []
 
     for path in (resolved.workspace_root, resolved.state_dir, resolved.skills_dir):
         if not path.exists():
-            path.mkdir(parents=True, exist_ok=True)
+            try:
+                path.mkdir(parents=True, exist_ok=True)
+            except OSError as exc:
+                operation = "workspace creation" if path == resolved.workspace_root else "directory creation"
+                raise BootstrapError(f"{operation} failed for {path} during mkdir: {exc}") from exc
             created.append(path)
 
     created.extend(_materialize_workspace_template(resolved.workspace_template_dir, resolved.workspace_root))
@@ -38,8 +46,15 @@ def _materialize_workspace_template(template_root: Path, workspace_root: Path) -
         if target_path.exists():
             continue
 
-        target_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source_path, target_path)
+        try:
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            raise BootstrapError(f"directory creation failed for {target_path.parent} during mkdir: {exc}") from exc
+
+        try:
+            shutil.copy2(source_path, target_path)
+        except OSError as exc:
+            raise BootstrapError(f"template copy failed for {target_path} from {source_path}: {exc}") from exc
         created.append(target_path)
 
     return created

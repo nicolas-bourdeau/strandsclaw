@@ -30,6 +30,10 @@ def load_normal_turn_assets(workspace_root: Path) -> AssistantAssets:
     )
 
 
+def load_bootstrap_instructions(workspace_root: Path) -> str:
+    return _read_workspace_file(workspace_root / "BOOTSTRAP.md")
+
+
 def _read_workspace_file(path: Path) -> str:
     if not path.exists():
         return ""

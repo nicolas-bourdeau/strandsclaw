@@ -61,16 +61,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T013 [P] [US2] Extend bootstrap acceptance coverage for missing, empty, and customized workspaces in tests/test_bootstrap.py
-- [ ] T014 [P] [US2] Add operator-facing bootstrap failure messaging tests for workspace creation and template-copy errors in tests/test_chat_runtime.py and tests/test_bootstrap.py
+- [X] T013 [P] [US2] Extend bootstrap acceptance coverage for missing, empty, and customized workspaces in tests/test_bootstrap.py
+- [X] T014 [P] [US2] Add operator-facing bootstrap failure messaging tests for workspace creation and template-copy errors in tests/test_chat_runtime.py and tests/test_bootstrap.py
 
 ### Implementation for User Story 2
 
-- [ ] T015 [P] [US2] Add default assistant asset templates in workspace-template/AGENTS.md, workspace-template/BOOTSTRAP.md, workspace-template/IDENTITY.md, and workspace-template/SOUL.md
-- [ ] T016 [US2] Update bootstrap asset materialization to add only missing assistant defaults in src/strandsclaw/bootstrap/init.py
-- [ ] T017 [US2] Add actionable bootstrap failure messages for workspace creation and template-copy errors in src/strandsclaw/bootstrap/init.py and src/strandsclaw/interfaces/cli.py
-- [ ] T018 [US2] Use `BOOTSTRAP.md` only during bootstrap-time startup handling in src/strandsclaw/workspace/assistant_assets.py and src/strandsclaw/interfaces/cli.py
-- [ ] T019 [US2] Verify INV-002, FR-014 bootstrap failure feedback, and operator-visible bootstrap outcomes in tests/test_bootstrap.py and tests/test_chat_runtime.py
+- [X] T015 [P] [US2] Add default assistant asset templates in workspace-template/AGENTS.md, workspace-template/BOOTSTRAP.md, workspace-template/IDENTITY.md, and workspace-template/SOUL.md
+- [X] T016 [US2] Update bootstrap asset materialization to add only missing assistant defaults in src/strandsclaw/bootstrap/init.py
+- [X] T017 [US2] Add actionable bootstrap failure messages for workspace creation and template-copy errors in src/strandsclaw/bootstrap/init.py and src/strandsclaw/interfaces/cli.py
+- [X] T018 [US2] Use `BOOTSTRAP.md` only during bootstrap-time startup handling in src/strandsclaw/workspace/assistant_assets.py and src/strandsclaw/interfaces/cli.py
+- [X] T019 [US2] Verify INV-002, FR-014 bootstrap failure feedback, and operator-visible bootstrap outcomes in tests/test_bootstrap.py and tests/test_chat_runtime.py
 
 **Checkpoint**: User Stories 1 and 2 both work independently, including first-run startup from an absent workspace.
 
@@ -84,14 +84,14 @@
 
 ### Tests for User Story 3
 
-- [ ] T020 [P] [US3] Add file-scope policy tests for allowed reads, traversal/symlink denial, size limits, binary detection, and unreadable files in tests/test_file_scope.py
-- [ ] T021 [P] [US3] Add chat integration tests for workspace file summarization, explicit tool usage, and outside-boundary refusal in tests/test_chat_runtime.py
+- [X] T020 [P] [US3] Add file-scope policy tests for allowed reads, traversal/symlink denial, size limits, binary detection, and unreadable files in tests/test_file_scope.py
+- [X] T021 [P] [US3] Add chat integration tests for workspace file summarization, explicit tool usage, and outside-boundary refusal in tests/test_chat_runtime.py
 
 ### Implementation for User Story 3
 
-- [ ] T022 [US3] Implement workspace-scoped text file read policy with 64 KB and binary checks in src/strandsclaw/workspace/file_scope.py
-- [ ] T023 [US3] Integrate file-read events and explicit file-read tool use into prompt construction and chat turn handling in src/strandsclaw/workspace/prompt_assembly.py, src/strandsclaw/workspace/file_tool.py, and src/strandsclaw/interfaces/cli.py
-- [ ] T024 [US3] Verify INV-003 and operator-facing denial messages in tests/test_file_scope.py and tests/test_chat_runtime.py
+- [X] T022 [US3] Implement workspace-scoped text file read policy with 64 KB and binary checks in src/strandsclaw/workspace/file_scope.py
+- [X] T023 [US3] Integrate file-read events and explicit file-read tool use into prompt construction and chat turn handling in src/strandsclaw/workspace/prompt_assembly.py, src/strandsclaw/workspace/file_tool.py, and src/strandsclaw/interfaces/cli.py
+- [X] T024 [US3] Verify INV-003 and operator-facing denial messages in tests/test_file_scope.py and tests/test_chat_runtime.py
 
 **Checkpoint**: All user stories are independently functional, including safe workspace file access.
 
@@ -101,7 +101,7 @@
 
 **Purpose**: Finish operator-facing docs and run full feature validation.
 
-- [ ] T025 [P] Update operator documentation for `chat`, model profile defaults, outage behavior, explicit file-read tooling, and bootstrap failure feedback in README.md and specs/001-workspace-chat-agent/quickstart.md
+- [X] T025 [P] Update operator documentation for `chat`, model profile defaults, outage behavior, explicit file-read tooling, and bootstrap failure feedback in README.md and specs/001-workspace-chat-agent/quickstart.md
 - [ ] T026 Validate SC-001 startup timing and run full regression coverage for the feature in specs/001-workspace-chat-agent/quickstart.md, tests/test_bootstrap.py, tests/test_chat_runtime.py, tests/test_session_store.py, and tests/test_file_scope.py
 
 ---

@@ -22,10 +22,16 @@ uv run strandsclaw bootstrap
 uv run strandsclaw list-skills
 ```
 
-## Start Chat Runtime (Planned Command)
+## Start Chat Runtime
 
 ```bash
 uv run strandsclaw chat --workspace-path /tmp/sc-workspace
+```
+
+Single-turn form:
+
+```bash
+uv run strandsclaw chat --workspace-path /tmp/sc-workspace --prompt "Summarize AGENTS.md"
 ```
 
 Expected startup behavior:
@@ -39,6 +45,7 @@ Expected startup behavior:
 - Restores existing single session when valid.
 - Archives unreadable session and starts fresh replacement session.
 - Starts the chat loop even when Ollama or the default model is unavailable.
+- Registers the explicit workspace file-read tool before handling turns.
 
 ## Smoke Tests
 
@@ -69,7 +76,14 @@ uv run strandsclaw chat --workspace-path /tmp/sc-new
 ```
 
 - Verify directory and required files are created automatically.
+- Verify startup prints a `workspace> bootstrapped ...` message.
 - Verify first chat response is returned without manual setup.
+
+### 2a. Customized workspace preservation
+
+- Create `/tmp/sc-workspace/AGENTS.md` with custom content.
+- Start chat against the same workspace.
+- Verify the custom `AGENTS.md` content remains unchanged while other missing assistant defaults are added.
 
 ### 3. Session resume
 
@@ -79,12 +93,12 @@ uv run strandsclaw chat --workspace-path /tmp/sc-new
 ### 4. File-scope allow
 
 - Create `/tmp/sc-workspace/notes.txt` with text content <= 64 KB.
-- Ask assistant to summarize `notes.txt`.
+- Ask assistant to summarize `notes.txt` using a prompt like `Summarize notes.txt`.
 - Verify response incorporates file content.
 
 ### 5. File-scope deny
 
-- Ask assistant to read `/etc/hosts` (outside workspace).
+- Ask assistant to read `../secret.txt` or `/etc/hosts` (outside workspace).
 - Verify denial explains workspace boundary.
 
 ### 6. File-size/binary deny

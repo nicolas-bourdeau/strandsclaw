@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+from strandsclaw.bootstrap.init import BootstrapError
 from strandsclaw.config import AppConfig, ModelProfile
 from strandsclaw.interfaces import cli
 
@@ -9,10 +12,14 @@ from strandsclaw.interfaces import cli
 def _seed_workspace(workspace_root: Path, template_root: Path) -> None:
     workspace_root.mkdir(parents=True, exist_ok=True)
     (workspace_root / "AGENTS.md").write_text("# AGENTS\nBe helpful.", encoding="utf-8")
+    (workspace_root / "BOOTSTRAP.md").write_text("# BOOTSTRAP\nInitialize carefully.", encoding="utf-8")
     (workspace_root / "IDENTITY.md").write_text("# IDENTITY\nYou are StrandsClaw.", encoding="utf-8")
     (workspace_root / "SOUL.md").write_text("# SOUL\nStay concise.", encoding="utf-8")
 
-    # Bootstrap currently copies from workspace template; keep template available.
+    for filename in ("AGENTS.md", "BOOTSTRAP.md", "IDENTITY.md", "SOUL.md"):
+        (template_root / filename).parent.mkdir(parents=True, exist_ok=True)
+        (template_root / filename).write_text(f"# {filename}\n", encoding="utf-8")
+
     (template_root / "skills" / "system").mkdir(parents=True, exist_ok=True)
     (template_root / "skills" / "system" / "SKILL.md").write_text("# System", encoding="utf-8")
 
@@ -102,3 +109,112 @@ def test_chat_emits_structured_runtime_events(tmp_path: Path, monkeypatch) -> No
     assert "session.loaded" in events
     assert "chat.turn_succeeded" in events
     assert "session.saved" in events
+
+
+def test_chat_bootstraps_missing_workspace_and_reports_it(tmp_path: Path, monkeypatch, capsys) -> None:
+    config = _make_config(tmp_path)
+    if config.workspace_root.exists():
+        for path in sorted(config.workspace_root.rglob("*"), reverse=True):
+            if path.is_file():
+                path.unlink()
+            elif path.is_dir():
+                path.rmdir()
+        config.workspace_root.rmdir()
+
+    monkeypatch.setattr(cli, "load_config", lambda **_: config)
+    monkeypatch.setattr(cli, "_generate_with_ollama", lambda *_: "ok")
+
+    exit_code = cli.main(["--workspace-path", str(config.workspace_root), "chat", "--prompt", "hello"])
+
+    assert exit_code == 0
+    output = capsys.readouterr().out
+    assert "workspace> bootstrapped" in output
+    assert (config.workspace_root / "AGENTS.md").exists()
+    assert (config.workspace_root / "BOOTSTRAP.md").exists()
+
+
+def test_bootstrap_instructions_are_used_only_when_bootstrap_is_required(tmp_path: Path, monkeypatch) -> None:
+    config = _make_config(tmp_path)
+    calls: list[str] = []
+
+    monkeypatch.setattr(cli, "load_config", lambda **_: config)
+    monkeypatch.setattr(cli, "_generate_with_ollama", lambda *_: "ok")
+    monkeypatch.setattr(
+        cli,
+        "load_bootstrap_instructions",
+        lambda workspace_root: calls.append(str(workspace_root)) or "bootstrap notes",
+    )
+
+    first = cli.main(["--workspace-path", str(config.workspace_root), "chat", "--prompt", "hello"])
+    second = cli.main(["--workspace-path", str(config.workspace_root), "chat", "--prompt", "hello again"])
+
+    assert first == 0
+    assert second == 0
+    assert calls == []
+
+    (config.workspace_root / "SOUL.md").unlink()
+    third = cli.main(["--workspace-path", str(config.workspace_root), "chat", "--prompt", "repair"])
+
+    assert third == 0
+    assert calls == [str(config.workspace_root)]
+
+
+def test_chat_reports_actionable_bootstrap_failure_and_exits_nonzero(tmp_path: Path, monkeypatch, capsys) -> None:
+    config = _make_config(tmp_path)
+    monkeypatch.setattr(cli, "load_config", lambda **_: config)
+
+    def _raise(_config):
+        raise BootstrapError("workspace creation failed for /tmp/example during mkdir: permission denied")
+
+    monkeypatch.setattr(cli, "bootstrap_workspace", _raise)
+
+    exit_code = cli.main(["--workspace-path", str(config.workspace_root), "chat", "--prompt", "hello"])
+
+    assert exit_code == 1
+    output = capsys.readouterr().out
+    assert "Bootstrap failed:" in output
+    assert "permission denied" in output
+
+
+def test_chat_includes_allowed_workspace_file_contents_in_prompt(tmp_path: Path, monkeypatch, capsys) -> None:
+    config = _make_config(tmp_path)
+    (config.workspace_root / "notes.txt").write_text("important workspace note", encoding="utf-8")
+    captured: dict[str, str] = {}
+
+    monkeypatch.setattr(cli, "load_config", lambda **_: config)
+
+    def _respond(_config, prompt: str) -> str:
+        captured["prompt"] = prompt
+        return "summary complete"
+
+    monkeypatch.setattr(cli, "_generate_with_ollama", _respond)
+
+    exit_code = cli.main([
+        "--workspace-path",
+        str(config.workspace_root),
+        "chat",
+        "--prompt",
+        "Summarize notes.txt",
+    ])
+
+    assert exit_code == 0
+    assert "important workspace note" in captured["prompt"]
+    assert "assistant> summary complete" in capsys.readouterr().out
+
+
+def test_chat_refuses_outside_boundary_file_read(tmp_path: Path, monkeypatch, capsys) -> None:
+    config = _make_config(tmp_path)
+    monkeypatch.setattr(cli, "load_config", lambda **_: config)
+    monkeypatch.setattr(cli, "_generate_with_ollama", lambda *_: pytest.fail("model should not be called"))
+
+    exit_code = cli.main([
+        "--workspace-path",
+        str(config.workspace_root),
+        "chat",
+        "--prompt",
+        "Read ../secret.txt",
+    ])
+
+    assert exit_code == 0
+    output = capsys.readouterr().out
+    assert "Denied: requested path is outside the active workspace boundary." in output

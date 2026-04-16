@@ -6,13 +6,13 @@ import urllib.error
 import urllib.request
 from dataclasses import asdict
 
-from strandsclaw.bootstrap.init import bootstrap_workspace
+from strandsclaw.bootstrap.init import BootstrapError, bootstrap_workspace
 from strandsclaw.config import AppConfig, load_config
 from strandsclaw.infrastructure.observability import RuntimeEventLogger
 from strandsclaw.infrastructure.state.file_state_store import FileStateStore
 from strandsclaw.infrastructure.state.session_store import SessionStore
-from strandsclaw.workspace.assistant_assets import load_normal_turn_assets
-from strandsclaw.workspace.file_tool import register_workspace_file_read_tool
+from strandsclaw.workspace.assistant_assets import get_missing_assistant_files, load_bootstrap_instructions, load_normal_turn_assets
+from strandsclaw.workspace.file_tool import collect_file_context, register_workspace_file_read_tool
 from strandsclaw.workspace.prompt_assembly import assemble_normal_turn_prompt
 from strandsclaw.workspace.skill_catalog import SkillCatalog
 
@@ -44,7 +44,11 @@ def main(argv: list[str] | None = None) -> int:
     config = load_config(workspace_path=args.workspace_path)
 
     if args.command == "bootstrap":
-        created = bootstrap_workspace(config)
+        try:
+            created = bootstrap_workspace(config)
+        except BootstrapError as exc:
+            print(f"Bootstrap failed: {exc}")
+            return 1
         print(json.dumps({"created": [str(path) for path in created]}, indent=2))
         return 0
 
@@ -81,8 +85,20 @@ def _run_chat(config: AppConfig, single_prompt: str | None) -> int:
     registered_tool = register_workspace_file_read_tool()
     logger.emit("tool.registered", tool=asdict(registered_tool))
 
-    created = bootstrap_workspace(config)
+    bootstrap_required = (not config.workspace_root.exists()) or bool(get_missing_assistant_files(config.workspace_root))
+
+    try:
+        created = bootstrap_workspace(config)
+    except BootstrapError as exc:
+        print(f"Bootstrap failed: {exc}")
+        logger.emit("workspace.bootstrap_failed", error=str(exc))
+        return 1
+
     logger.emit("workspace.bootstrap", created=[str(path) for path in created])
+    if bootstrap_required:
+        instructions = load_bootstrap_instructions(config.workspace_root)
+        logger.emit("workspace.bootstrap_instructions_loaded", has_instructions=bool(instructions.strip()))
+        print(f"workspace> bootstrapped {config.workspace_root}")
 
     state_store = FileStateStore(config.state_dir)
     session_store = SessionStore(state_store)
@@ -117,14 +133,31 @@ def _handle_turn(
     user_prompt: str,
 ):
     assets = load_normal_turn_assets(config.workspace_root)
-    prompt = assemble_normal_turn_prompt(assets, user_prompt)
-    try:
-        response = _generate_with_ollama(config, prompt)
-        logger.emit("chat.turn_succeeded")
-    except ModelUnavailableError as exc:
-        response = f"Model unavailable: {exc}. Verify Ollama is running and the model is installed."
-        logger.emit("chat.turn_model_unavailable", error=str(exc))
+    file_context, file_result = collect_file_context(config.workspace_root, user_prompt)
 
+    if file_result is not None and file_result.status != "allowed":
+        response = file_result.reason or "Denied: file could not be read."
+        logger.emit(
+            "file.read_denied",
+            requested_path=file_result.requested_path,
+            reason=file_result.reason,
+        )
+    else:
+        if file_result is not None:
+            logger.emit(
+                "file.read_allowed",
+                requested_path=file_result.requested_path,
+                resolved_path=file_result.resolved_path,
+                bytes_read=file_result.bytes_read,
+            )
+
+        prompt = assemble_normal_turn_prompt(assets, user_prompt, file_context=file_context)
+        try:
+            response = _generate_with_ollama(config, prompt)
+            logger.emit("chat.turn_succeeded")
+        except ModelUnavailableError as exc:
+            response = f"Model unavailable: {exc}. Verify Ollama is running and the model is installed."
+            logger.emit("chat.turn_model_unavailable", error=str(exc))
     print(f"assistant> {response}")
     updated = session_store.append_turn(session, user_prompt, response)
     session_store.save(updated)
