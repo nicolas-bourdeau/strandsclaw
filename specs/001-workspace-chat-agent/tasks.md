@@ -11,7 +11,7 @@
 
 **Purpose**: Establish shared configuration needed by all stories.
 
-- [ ] T001 Extend structured model profile defaults and config serialization in src/strandsclaw/config.py and src/strandsclaw/interfaces/cli.py
+- [X] T001 Extend structured model profile defaults and config serialization in src/strandsclaw/config.py and src/strandsclaw/interfaces/cli.py
 
 ---
 
@@ -21,11 +21,11 @@
 
 **⚠️ CRITICAL**: No user story work should begin until this phase is complete.
 
-- [ ] T002 [P] Add shared assistant asset loading and prompt assembly helpers in src/strandsclaw/workspace/assistant_assets.py and src/strandsclaw/workspace/prompt_assembly.py
-- [ ] T003 [P] Add shared single-session persistence adapter in src/strandsclaw/infrastructure/state/session_store.py
-- [ ] T004 [P] Add structured runtime event logging for bootstrap, chat, session, file-read, and model-unavailable flows in src/strandsclaw/infrastructure/observability.py and src/strandsclaw/interfaces/cli.py
-- [ ] T005 [P] Add explicit workspace file-read tool registration seam in src/strandsclaw/workspace/file_tool.py and connect it in src/strandsclaw/interfaces/cli.py
-- [ ] T006 Add shared chat runtime fixtures and invariant-oriented test helpers in tests/test_chat_runtime.py
+- [X] T002 [P] Add shared assistant asset loading and prompt assembly helpers in src/strandsclaw/workspace/assistant_assets.py and src/strandsclaw/workspace/prompt_assembly.py
+- [X] T003 [P] Add shared single-session persistence adapter in src/strandsclaw/infrastructure/state/session_store.py
+- [X] T004 [P] Add structured runtime event logging for bootstrap, chat, session, file-read, and model-unavailable flows in src/strandsclaw/infrastructure/observability.py and src/strandsclaw/interfaces/cli.py
+- [X] T005 [P] Add explicit workspace file-read tool registration seam in src/strandsclaw/workspace/file_tool.py and connect it in src/strandsclaw/interfaces/cli.py
+- [X] T006 Add shared chat runtime fixtures and invariant-oriented test helpers in tests/test_chat_runtime.py
 
 **Checkpoint**: Foundation ready; user story slices can now proceed.
 
@@ -39,15 +39,15 @@
 
 ### Tests for User Story 1
 
-- [ ] T007 [P] [US1] Add chat runtime integration tests for startup, prompt/response flow, session resume, model-unavailable turn errors, and structured runtime events in tests/test_chat_runtime.py
-- [ ] T008 [P] [US1] Add session persistence and archive-recovery tests in tests/test_session_store.py
+- [X] T007 [P] [US1] Add chat runtime integration tests for startup, prompt/response flow, session resume, model-unavailable turn errors, and structured runtime events in tests/test_chat_runtime.py
+- [X] T008 [P] [US1] Add session persistence and archive-recovery tests in tests/test_session_store.py
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Implement single-session load, append, save, and archive-on-recovery behavior in src/strandsclaw/infrastructure/state/session_store.py
-- [ ] T010 [US1] Implement normal-turn assistant asset loading and prompt assembly from `AGENTS.md`, `IDENTITY.md`, and `SOUL.md` in src/strandsclaw/workspace/assistant_assets.py and src/strandsclaw/workspace/prompt_assembly.py
-- [ ] T011 [US1] Wire the `chat` command, explicit tool registration, session resume/persist flow, and per-turn model-unavailable errors in src/strandsclaw/interfaces/cli.py and src/strandsclaw/workspace/file_tool.py
-- [ ] T012 [US1] Verify INV-001, INV-004, INV-005, observability requirements, and interface-layer ownership boundaries in tests/test_chat_runtime.py and tests/test_session_store.py
+- [X] T009 [US1] Implement single-session load, append, save, and archive-on-recovery behavior in src/strandsclaw/infrastructure/state/session_store.py
+- [X] T010 [US1] Implement normal-turn assistant asset loading and prompt assembly from `AGENTS.md`, `IDENTITY.md`, and `SOUL.md` in src/strandsclaw/workspace/assistant_assets.py and src/strandsclaw/workspace/prompt_assembly.py
+- [X] T011 [US1] Wire the `chat` command, explicit tool registration, session resume/persist flow, and per-turn model-unavailable errors in src/strandsclaw/interfaces/cli.py and src/strandsclaw/workspace/file_tool.py
+- [X] T012 [US1] Verify INV-001, INV-004, INV-005, observability requirements, and interface-layer ownership boundaries in tests/test_chat_runtime.py and tests/test_session_store.py
 
 **Checkpoint**: User Story 1 is independently functional and demonstrable as the MVP.
 

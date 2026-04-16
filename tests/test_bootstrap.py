@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from strandsclaw.bootstrap.init import bootstrap_workspace
-from strandsclaw.config import AppConfig
+from strandsclaw.config import AppConfig, ModelProfile
 from strandsclaw.infrastructure.state.file_state_store import FileStateStore
 from strandsclaw.workspace.skill_catalog import SkillCatalog
 
@@ -17,7 +17,7 @@ def make_config(tmp_path: Path) -> AppConfig:
         workspace_template_dir=template_root,
         skills_dir=workspace_root / "skills",
         state_dir=workspace_root / ".state",
-        default_model="test-model",
+        model_profile=ModelProfile(provider="ollama", model="qwen3.5:latest", context_window=65536),
     )
 
 
