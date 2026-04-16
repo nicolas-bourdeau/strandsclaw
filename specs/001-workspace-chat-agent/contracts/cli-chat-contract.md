@@ -12,7 +12,8 @@ Defines operator-visible CLI behavior for starting and using the workspace assis
   - Resolves one active workspace.
   - Bootstraps missing assistant assets before first turn when needed.
   - Restores existing single session or safely recovers from unreadable session state.
-  - Starts interactive chat loop and returns assistant responses.
+  - Starts interactive chat loop even if local model runtime is unavailable.
+  - Returns assistant responses when model access is available, otherwise returns actionable model-unavailable errors per turn.
 
 ## Inputs
 
@@ -22,10 +23,10 @@ Defines operator-visible CLI behavior for starting and using the workspace assis
 ## Outputs
 
 - Success:
-  - Assistant response text for each accepted prompt.
+  - Assistant response text for each accepted prompt when model access succeeds.
   - Informational startup messages (workspace resolved, bootstrapped, session resumed/new).
 - Error:
-  - Actionable operator message when model runtime is unavailable.
+  - Actionable operator message when model runtime is unavailable for a turn.
   - Clear refusal text for denied file reads (outside workspace, binary, >64 KB, unreadable).
 
 ## Startup Guarantees
@@ -45,7 +46,7 @@ Defines operator-visible CLI behavior for starting and using the workspace assis
 ### Model runtime failures
 
 - Condition: Ollama unavailable, model missing, or generation call fails.
-- Contract: keep session state intact and print actionable recovery hints.
+- Contract: startup still succeeds, chat loop remains active, session state remains intact, and each attempted turn prints actionable recovery hints until model availability is restored.
 
 ### File read refusals
 
@@ -56,5 +57,5 @@ Defines operator-visible CLI behavior for starting and using the workspace assis
 
 ## Exit Behavior
 
-- `0`: normal command completion.
-- non-zero: startup/runtime failure before usable chat flow.
+- `0`: normal command completion, including sessions where one or more turns returned model-unavailable errors.
+- non-zero: bootstrap or unrecoverable command setup failure before usable chat flow.

@@ -3,7 +3,7 @@
 ## Decision 1: Default Local Model Profile Representation
 
 - Decision: Represent model runtime settings as a structured profile in configuration (`provider=ollama`, `model=qwen3.5:latest`, `context_window=65536`) rather than a single model string.
-- Rationale: FR-007 and FR-008 require a default model setup that works now and remains replaceable by a future install/setup flow; a typed profile avoids scattering model/context rules across CLI and runtime glue.
+- Rationale: FR-007 and FR-008 require a default model setup that works now and remains replaceable by a future install/setup flow; FR-019 requires outage handling without redesigning startup flow. A typed profile avoids scattering model/context rules across CLI and runtime glue.
 - Alternatives considered:
   - Keep only `default_model` string (rejected: cannot cleanly represent context-window defaults and future provider-level overrides).
   - Hardcode model profile inside CLI command handler (rejected: violates boundary guidance by embedding runtime rules in interface code).
@@ -38,3 +38,11 @@
 - Alternatives considered:
   - Include `BOOTSTRAP.md` on every turn (rejected: contradicts clarified prompt contract and adds unnecessary prompt bloat).
   - Dynamically include all `*.md` files in workspace root (rejected: nondeterministic and can violate predictable runtime behavior).
+
+## Decision 6: Model-Unavailable Runtime Behavior
+
+- Decision: Let startup and chat-loop initialization succeed even when Ollama or the configured model is unavailable, and return actionable model-unavailable errors for each attempted turn until the operator restores availability.
+- Rationale: FR-019 explicitly prefers a recoverable runtime over fail-fast startup, which keeps workspace bootstrap, session continuity, and operator interaction testable even during model outages.
+- Alternatives considered:
+  - Fail startup immediately when Ollama/model access is unavailable (rejected: conflicts with clarified MVP behavior).
+  - Retry startup until model access returns (rejected: adds blocking behavior and hides the actual outage state from the operator).

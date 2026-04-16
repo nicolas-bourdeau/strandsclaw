@@ -4,8 +4,8 @@
 
 - Python 3.11+
 - `uv` installed
-- Local Ollama service running
-- Ollama model `qwen3.5:latest` available locally
+- Local Ollama service optional for startup validation
+- Ollama model `qwen3.5:latest` optional for outage-path validation and required for successful response generation
 
 ## Setup
 
@@ -38,6 +38,7 @@ Expected startup behavior:
   - `SOUL.md`
 - Restores existing single session when valid.
 - Archives unreadable session and starts fresh replacement session.
+- Starts the chat loop even when Ollama or the default model is unavailable.
 
 ## Smoke Tests
 
@@ -49,6 +50,16 @@ uv run strandsclaw chat --workspace-path /tmp/sc-workspace
 
 - Send prompt: `Summarize your role in this workspace.`
 - Verify assistant responds and turn is persisted.
+
+### 1a. Model-unavailable startup and turn failure
+
+```bash
+uv run strandsclaw chat --workspace-path /tmp/sc-workspace
+```
+
+- Stop Ollama or remove model availability before starting the command.
+- Verify the chat loop still starts.
+- Send a prompt and verify the turn returns an actionable model-unavailable error instead of terminating startup.
 
 ### 2. Missing workspace bootstrap
 
@@ -92,4 +103,4 @@ Focus areas for this feature:
 - bootstrap idempotency and non-overwrite behavior
 - single-session persistence and archive recovery
 - workspace boundary and read-policy enforcement
-- chat command startup/resume behavior
+- chat command startup/resume behavior, including model-unavailable turn handling
