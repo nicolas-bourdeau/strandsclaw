@@ -14,6 +14,10 @@
 - Q: What should happen if the persisted session is unreadable or corrupted? → A: Archive the unreadable session and start a fresh single session automatically.
 - Q: What file-read size limit should the MVP enforce? → A: Limit reads to text files up to 64 KB per request and refuse larger or binary files with a clear message.
 
+### Session 2026-04-16
+
+- Q: How should runtime behave when local Ollama is unavailable? → A: Start chat loop anyway, but each turn returns a model-unavailable error until operator fixes runtime.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Chat with the workspace assistant (Priority: P1)
@@ -120,6 +124,7 @@ An operator can ask the assistant about files in the active workspace, and the a
 - **FR-016**: The system MUST use `BOOTSTRAP.md` only during workspace bootstrap behavior and MUST NOT include it in normal chat-turn prompt assembly.
 - **FR-017**: Tool-definition files are out of scope for this MVP prompt contract and MUST remain deferred until a later feature clarification.
 - **FR-018**: The system MUST limit each file-read request to readable text files of at most 64 KB and MUST refuse larger or binary files with a clear message.
+- **FR-019**: The system MUST allow startup to succeed when local model runtime is unavailable, and each attempted chat turn MUST return an actionable model-unavailable error until the operator restores model availability.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -142,7 +147,7 @@ An operator can ask the assistant about files in the active workspace, and the a
 ## Assumptions
 
 - This MVP targets a single local operator working with one active assistant session per workspace.
-- The operator can run the local Ollama service and make the default `qwen3.5:latest` model available before attempting chat.
+- The operator may start chat before local Ollama or the default `qwen3.5:latest` model is available and can restore model availability during runtime.
 - Only basic text-oriented file reading is in scope for this feature; file writing, file editing, and multi-tool orchestration can be added later.
 - The OpenClaw-inspired workspace structure will be adapted into StrandsClaw starter assets rather than copied as a strict one-to-one clone.
 - A future installation or setup flow may change the default model profile, but that flow itself is out of scope for this feature.
