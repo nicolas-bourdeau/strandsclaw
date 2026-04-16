@@ -10,16 +10,16 @@ handoffs:
     prompt: Create a checklist for the following domain...
 ---
 
-  ## Repository-Specific Guidance
+## Repository-Specific Guidance
 
-  - Plan for the existing minimal core first: `bootstrap/`, `interfaces/`, `workspace/`, and `infrastructure/state`.
-  - Introduce `src/strandsclaw/domain` only when the feature needs explicit domain types, invariants, or domain services.
-  - Introduce `src/strandsclaw/application` only when use-case orchestration becomes distinct from interface or infrastructure concerns.
-  - Treat file-backed state, workspace materialization, Strands integration, and external tools as infrastructure concerns unless the feature requires explicit domain abstractions.
-  - In the Constitution Check, explicitly justify any new DDD layer, repository abstraction, domain service, or agent assembly module.
-  - In research and design outputs, map each important responsibility to one of: domain, application, infrastructure, interfaces.
-  - Prefer simple vertical slices over future-proof scaffolding. Reject layers that exist only for symmetry.
-  - If the feature changes workspace-template assets, include how template defaults, active workspace behavior, and idempotent bootstrap expectations remain aligned.
+- Plan for the existing minimal core first: `bootstrap/`, `interfaces/`, `workspace/`, and `infrastructure/state`.
+- Introduce `src/strandsclaw/domain` only when the feature needs explicit domain types, invariants, or domain services.
+- Introduce `src/strandsclaw/application` only when use-case orchestration becomes distinct from interface or infrastructure concerns.
+- Treat file-backed state, workspace materialization, Strands integration, and external tools as infrastructure concerns unless the feature requires explicit domain abstractions.
+- In the Constitution Check, explicitly justify any new DDD layer, repository abstraction, domain service, or agent assembly module.
+- In research and design outputs, map each important responsibility to one of: domain, application, infrastructure, interfaces.
+- Prefer simple vertical slices over future-proof scaffolding. Reject layers that exist only for symmetry.
+- If the feature changes workspace-template assets, include how template defaults, active workspace behavior, and idempotent bootstrap expectations remain aligned.
 
 ## User Input
 
