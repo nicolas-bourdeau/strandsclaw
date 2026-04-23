@@ -102,7 +102,7 @@
 **Purpose**: Finish operator-facing docs and run full feature validation.
 
 - [X] T025 [P] Update operator documentation for `chat`, model profile defaults, outage behavior, explicit file-read tooling, and bootstrap failure feedback in README.md and specs/001-workspace-chat-agent/quickstart.md
-- [ ] T026 Validate SC-001 startup timing and run full regression coverage for the feature in specs/001-workspace-chat-agent/quickstart.md, tests/test_bootstrap.py, tests/test_chat_runtime.py, tests/test_session_store.py, and tests/test_file_scope.py
+- [X] T026 Validate SC-001 startup timing and run full regression coverage for the feature in specs/001-workspace-chat-agent/quickstart.md, tests/test_bootstrap.py, tests/test_chat_runtime.py, tests/test_session_store.py, and tests/test_file_scope.py
 
 ---
 

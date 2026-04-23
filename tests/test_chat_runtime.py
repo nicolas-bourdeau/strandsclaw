@@ -218,3 +218,41 @@ def test_chat_refuses_outside_boundary_file_read(tmp_path: Path, monkeypatch, ca
     assert exit_code == 0
     output = capsys.readouterr().out
     assert "Denied: requested path is outside the active workspace boundary." in output
+
+
+def test_sc001_startup_from_missing_workspace_completes_under_60s(tmp_path: Path, monkeypatch, capsys) -> None:
+    """SC-001: From an empty or missing workspace, the operator reaches the first assistant response
+    in one start action and under 60 seconds, excluding external model download time."""
+    import time
+
+    # Use a workspace path that does not exist yet (empty/missing start state)
+    workspace_root = tmp_path / "brand_new_workspace"
+    template_root = tmp_path / "workspace-template"
+    template_root.mkdir(parents=True, exist_ok=True)
+    for filename in ("AGENTS.md", "BOOTSTRAP.md", "IDENTITY.md", "SOUL.md"):
+        (template_root / filename).write_text(f"# {filename}\n", encoding="utf-8")
+    (template_root / "skills" / "system").mkdir(parents=True, exist_ok=True)
+    (template_root / "skills" / "system" / "SKILL.md").write_text("# System", encoding="utf-8")
+
+    config = AppConfig(
+        repo_root=tmp_path,
+        workspace_root=workspace_root,
+        workspace_template_dir=template_root,
+        skills_dir=workspace_root / "skills",
+        state_dir=workspace_root / ".state",
+        model_profile=ModelProfile(provider="ollama", model="qwen3.5:latest", context_window=65536),
+    )
+
+    monkeypatch.setattr(cli, "load_config", lambda **_: config)
+    # Simulate model response with negligible latency (excludes external download time per SC-001)
+    monkeypatch.setattr(cli, "_generate_with_ollama", lambda *_: "Hello from the assistant")
+
+    start = time.monotonic()
+    exit_code = cli.main(["--workspace-path", str(workspace_root), "chat", "--prompt", "hello"])
+    elapsed = time.monotonic() - start
+
+    assert exit_code == 0
+    output = capsys.readouterr().out
+    assert "assistant> Hello from the assistant" in output
+    # SC-001: must complete under 60 seconds (excluding external model download time)
+    assert elapsed < 60.0, f"SC-001 violated: startup took {elapsed:.2f}s, limit is 60s"
