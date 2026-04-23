@@ -10,17 +10,6 @@ handoffs:
     prompt: Create a checklist for the following domain...
 ---
 
-## Repository-Specific Guidance
-
-- Plan for the existing minimal core first: `bootstrap/`, `interfaces/`, `workspace/`, and `infrastructure/state`.
-- Introduce `src/strandsclaw/domain` only when the feature needs explicit domain types, invariants, or domain services.
-- Introduce `src/strandsclaw/application` only when use-case orchestration becomes distinct from interface or infrastructure concerns.
-- Treat file-backed state, workspace materialization, Strands integration, and external tools as infrastructure concerns unless the feature requires explicit domain abstractions.
-- In the Constitution Check, explicitly justify any new DDD layer, repository abstraction, domain service, or agent assembly module.
-- In research and design outputs, map each important responsibility to one of: domain, application, infrastructure, interfaces.
-- Prefer simple vertical slices over future-proof scaffolding. Reject layers that exist only for symmetry.
-- If the feature changes workspace-template assets, include how template defaults, active workspace behavior, and idempotent bootstrap expectations remain aligned.
-
 ## User Input
 
 ```text
@@ -150,15 +139,11 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Skip if project is purely internal (build scripts, one-off tools, etc.)
 
 3. **Agent context update**:
-   - Run `.specify/scripts/bash/update-agent-context.sh copilot`
-   - These scripts detect which AI agent is in use
-   - Update the appropriate agent-specific context file
-   - Add only new technology from current plan
-   - Preserve manual additions between markers
+   - Update the plan reference between the `<!-- SPECKIT START -->` and `<!-- SPECKIT END -->` markers in `.github/copilot-instructions.md` to point to the plan file created in step 1 (the IMPL_PLAN path)
 
-**Output**: data-model.md, /contracts/*, quickstart.md, agent-specific file
+**Output**: data-model.md, /contracts/*, quickstart.md, updated agent context file
 
 ## Key rules
 
-- Use absolute paths
+- Use absolute paths for filesystem operations; use project-relative paths for references in documentation and agent context files
 - ERROR on gate failures or unresolved clarifications

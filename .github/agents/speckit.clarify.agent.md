@@ -6,15 +6,6 @@ handoffs:
     prompt: Create a plan for the spec. I am building with...
 ---
 
-## Repository-Specific Guidance
-
-- Prioritize clarifications that materially affect bounded context, domain invariants, workspace behavior, or external boundaries.
-- Favor questions that keep business rules out of CLI, Strands integration glue, and file-backed persistence.
-- If a question is purely about implementation structure, prefer deferring it to `/speckit.plan` unless it changes scope or acceptance behavior.
-- When the feature interacts with workspace files, clarify operator intent, lifecycle rules, overwrite semantics, and failure handling before planning.
-- Normalize terminology toward domain language used by the spec and constitution.
-- If a feature seems to need new `domain/` or `application/` layers, ask only the minimum question needed to determine whether richer separation is actually justified.
-
 ## User Input
 
 ```text

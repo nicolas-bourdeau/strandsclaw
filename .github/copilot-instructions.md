@@ -41,3 +41,8 @@ Copilot SHOULD block or revise proposals that introduce speculative DDD scaffold
 This is a public repository: do not commit secrets, API keys, tokens, passwords, private keys, or machine-specific absolute paths.
 Use portable relative paths and environment variables for local configuration.
 When editing config and docs, sanitize user-specific values before commit.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

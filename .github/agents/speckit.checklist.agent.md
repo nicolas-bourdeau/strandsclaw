@@ -2,16 +2,6 @@
 description: Generate a custom checklist for the current feature based on user requirements.
 ---
 
-## Repository-Specific Guidance
-
-- Generate a concise, feature-specific checklist for the active work that reflects this repository's workflow.
-- Prioritize spec completeness for bounded context, ubiquitous language, invariants, and external boundaries.
-- Check plan quality for minimal-core decisions and any justified DDD layer additions.
-- Check task quality for independently testable vertical slices with clear file paths.
-- Check verification coverage for file-backed state, workspace behavior, and operator-visible outcomes when relevant.
-- Include public-repo hygiene checks for secrets, absolute paths, and unsafe local-only assumptions.
-- Avoid generic checklist items when a repository-specific check would be more useful.
-
 ## Checklist Purpose: "Unit Tests for English"
 
 **CRITICAL CONCEPT**: Checklists are **UNIT TESTS FOR REQUIREMENTS WRITING** - they validate the quality, clarity, and completeness of requirements in a given domain.

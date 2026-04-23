@@ -2,17 +2,6 @@
 description: Execute the implementation plan by processing and executing all tasks defined in tasks.md
 ---
 
-## Repository-Specific Guidance
-
-- Treat `spec.md`, `plan.md`, and `tasks.md` as the source of truth for the active feature.
-- Preserve the minimal core unless the plan explicitly justifies introducing `src/strandsclaw/domain`, `src/strandsclaw/application`, or `src/strandsclaw/agents`.
-- Keep business rules out of CLI handlers, workspace bootstrapping, Strands integration glue, and persistence adapters.
-- Place durable file-backed state behavior in `src/strandsclaw/infrastructure/state` unless the plan defines a more explicit domain abstraction.
-- Keep runtime skills in workspace paths and template defaults in `workspace-template/`.
-- Implement one independently testable vertical slice at a time and run focused verification as each slice lands.
-- Use `uv run pytest` for test validation and keep changes consistent with public-repo hygiene requirements.
-- If tasks and repository reality diverge, update the relevant spec artifacts before widening the code change.
-
 ## User Input
 
 ```text
