@@ -11,8 +11,8 @@
 
 **Purpose**: Add the ACP dependency and operator-facing command surface prerequisites needed before shared runtime extraction starts.
 
-- [ ] T001 Add the `agent-client-protocol` dependency and ACP script wiring expectations in /home/nbourdeau/dev/strandsclaw/pyproject.toml
-- [ ] T002 [P] Add the planned `strandsclaw acp --workspace-path` operator entrypoint documentation in /home/nbourdeau/dev/strandsclaw/README.md
+- [X] T001 Add the `agent-client-protocol` dependency and ACP script wiring expectations in /home/nbourdeau/dev/strandsclaw/pyproject.toml
+- [X] T002 [P] Add the planned `strandsclaw acp --workspace-path` operator entrypoint documentation in /home/nbourdeau/dev/strandsclaw/README.md
 
 ---
 
@@ -22,11 +22,11 @@
 
 **⚠️ CRITICAL**: No user story work should start until this phase is complete.
 
-- [ ] T003 Extract shared workspace runtime types and operations into /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
-- [ ] T004 [P] Create the ACP adapter package export surface in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/\_\_init\_\_.py
-- [ ] T005 [P] Add transport-neutral ACP translation helpers in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
-- [ ] T006 Add foundational runtime-seam and invariant regression coverage in /home/nbourdeau/dev/strandsclaw/tests/test_chat_runtime.py and /home/nbourdeau/dev/strandsclaw/tests/test_session_store.py
-- [ ] T007 Refactor CLI chat flow to delegate bootstrap, session loading, and turn execution through /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/cli.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
+- [X] T003 Extract shared workspace runtime types and operations into /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
+- [X] T004 [P] Create the ACP adapter package export surface in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/\_\_init\_\_.py
+- [X] T005 [P] Add transport-neutral ACP translation helpers in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
+- [X] T006 Add foundational runtime-seam and invariant regression coverage in /home/nbourdeau/dev/strandsclaw/tests/test_chat_runtime.py and /home/nbourdeau/dev/strandsclaw/tests/test_session_store.py
+- [X] T007 Refactor CLI chat flow to delegate bootstrap, session loading, and turn execution through /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/cli.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
 
 **Checkpoint**: Foundation ready. The repo now has one shared runtime seam for launch-bound workspace resolution, shared workspace session semantics, and final turn outcomes.
 
@@ -40,15 +40,15 @@
 
 ### Tests for User Story 1
 
-- [ ] T008 [US1] Add ACP startup, capability advertisement, and prompt contract tests in /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
+- [X] T008 [US1] Add ACP startup, capability advertisement, and prompt contract tests in /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Add ACP command routing for `strandsclaw acp --workspace-path` in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/cli.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/acp.py
-- [ ] T010 [P] [US1] Implement ACP stdio agent initialization and `session/new` handling in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
-- [ ] T011 [P] [US1] Implement ACP text prompt and final response mapping in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
-- [ ] T012 [US1] Route ACP `session/prompt` execution through /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
-- [ ] T013 [US1] Reject unsupported non-MVP ACP capabilities and non-text payloads explicitly in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
+- [X] T009 [US1] Add ACP command routing for `strandsclaw acp --workspace-path` in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/cli.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/acp.py
+- [X] T010 [P] [US1] Implement ACP stdio agent initialization and `session/new` handling in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
+- [X] T011 [P] [US1] Implement ACP text prompt and final response mapping in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
+- [X] T012 [US1] Route ACP `session/prompt` execution through /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
+- [X] T013 [US1] Reject unsupported non-MVP ACP capabilities and non-text payloads explicitly in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
 
 **Checkpoint**: User Story 1 is complete when ACP discovery, session creation, and one final completed chat turn work through the launch-bound workspace.
 
@@ -62,16 +62,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T014 [US2] Add ACP bootstrap, reconnect, disconnect-safety, and shared workspace session reuse tests in /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
-- [ ] T015 [P] [US2] Add unreadable-session archive-and-recovery coverage for ACP flows in /home/nbourdeau/dev/strandsclaw/tests/test_session_store.py
-- [ ] T016 [P] [US2] Add structured ACP capability, session, and turn observability checks in /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
+- [X] T014 [US2] Add ACP bootstrap, reconnect, disconnect-safety, and shared workspace session reuse tests in /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
+- [X] T015 [P] [US2] Add unreadable-session archive-and-recovery coverage for ACP flows in /home/nbourdeau/dev/strandsclaw/tests/test_session_store.py
+- [X] T016 [P] [US2] Add structured ACP capability, session, and turn observability checks in /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] Preserve bootstrap-before-first-turn and shared workspace session loading in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
-- [ ] T018 [US2] Bind multiple ACP protocol sessions to the single persisted workspace session in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
-- [ ] T019 [US2] Preserve file-scope refusals, disconnect safety, and actionable model, bootstrap, and session-recovery outcomes in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
-- [ ] T020 [US2] Emit structured ACP capability, session, and turn runtime events in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
+- [X] T017 [US2] Preserve bootstrap-before-first-turn and shared workspace session loading in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
+- [X] T018 [US2] Bind multiple ACP protocol sessions to the single persisted workspace session in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
+- [X] T019 [US2] Preserve file-scope refusals, disconnect safety, and actionable model, bootstrap, and session-recovery outcomes in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
+- [X] T020 [US2] Emit structured ACP capability, session, and turn runtime events in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py
 
 **Checkpoint**: User Story 2 is complete when ACP behaves like the native runtime for bootstrap, shared-session continuity, and workspace safety.
 
@@ -85,12 +85,12 @@
 
 ### Tests for User Story 3
 
-- [ ] T021 [US3] Add adapter-runtime seam regression tests for future transport reuse in /home/nbourdeau/dev/strandsclaw/tests/test_chat_runtime.py
+- [X] T021 [US3] Add adapter-runtime seam regression tests for future transport reuse in /home/nbourdeau/dev/strandsclaw/tests/test_chat_runtime.py
 
 ### Implementation for User Story 3
 
-- [ ] T022 [US3] Finalize transport-neutral runtime request, outcome, and disconnect semantics in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
-- [ ] T023 [US3] Keep ACP transport glue isolated from core runtime rules in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/acp.py, /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py, and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
+- [X] T022 [US3] Finalize transport-neutral runtime request, outcome, and disconnect semantics in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/workspace/chat_runtime.py
+- [X] T023 [US3] Keep ACP transport glue isolated from core runtime rules in /home/nbourdeau/dev/strandsclaw/src/strandsclaw/interfaces/acp.py, /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/agent.py, and /home/nbourdeau/dev/strandsclaw/src/strandsclaw/infrastructure/acp/mapping.py
 
 **Checkpoint**: User Story 3 is complete when the ACP adapter proves the reusable seam without broadening scope beyond ACP, launch-bound workspace semantics, basic chat turns, final completed responses, and the shared single workspace session model.
 
@@ -100,9 +100,9 @@
 
 **Purpose**: Finish cross-story documentation and validation after all desired user stories are complete.
 
-- [ ] T024 [P] Update deferred OpenAI-compatible scope and reusable seam wording in /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/quickstart.md and /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/contracts/adapter-runtime-contract.md
-- [ ] T025 Validate operator-facing ACP usage and capability documentation against ACP contract responses and quickstart examples in /home/nbourdeau/dev/strandsclaw/README.md and /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/contracts/acp-agent-contract.md
-- [ ] T026 Validate ACP startup timing on the local quickstart baseline and confirm that each supported turn persists exactly one final assistant response in /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/quickstart.md and /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
+- [X] T024 [P] Update deferred OpenAI-compatible scope and reusable seam wording in /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/quickstart.md and /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/contracts/adapter-runtime-contract.md
+- [X] T025 Validate operator-facing ACP usage and capability documentation against ACP contract responses and quickstart examples in /home/nbourdeau/dev/strandsclaw/README.md and /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/contracts/acp-agent-contract.md
+- [X] T026 Validate ACP startup timing on the local quickstart baseline and confirm that each supported turn persists exactly one final assistant response in /home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/quickstart.md and /home/nbourdeau/dev/strandsclaw/tests/test_acp_agent.py
 
 ---
 

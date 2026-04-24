@@ -16,8 +16,6 @@ uv sync
 
 ## Launch the ACP Agent
 
-Planned command surface:
-
 ```bash
 uv run strandsclaw acp --workspace-path /tmp/sc-workspace
 ```
