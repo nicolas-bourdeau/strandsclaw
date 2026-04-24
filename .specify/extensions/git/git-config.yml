@@ -28,7 +28,7 @@ auto_commit:
     enabled: false
     message: "[Spec Kit] Save progress before checklist"
   before_analyze:
-    enabled: false
+    enabled: true
     message: "[Spec Kit] Save progress before analysis"
   before_taskstoissues:
     enabled: false

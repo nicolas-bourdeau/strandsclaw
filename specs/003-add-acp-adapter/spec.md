@@ -33,7 +33,7 @@ An operator can point a standard ACP-capable client at StrandsClaw and start a u
 
 ### User Story 2 - Preserve Workspace Assistant Behavior Through the Adapter (Priority: P2)
 
-An operator using StrandsClaw through ACP gets the same workspace-scoped assistant behavior they would expect from the native runtime, including bootstrap, session continuity, and workspace-bound file awareness.
+An operator using StrandsClaw through ACP gets the same workspace-scoped assistant behavior they would expect from the native runtime, including bootstrap, session continuity, disconnect safety, and workspace-bound file awareness.
 
 **Why this priority**: A protocol adapter only has value if it preserves the assistant's core behavior instead of creating a weaker parallel runtime.
 
@@ -44,6 +44,7 @@ An operator using StrandsClaw through ACP gets the same workspace-scoped assista
 1. **Given** a workspace that is missing required assistant assets, **When** an ACP client starts the first session, **Then** StrandsClaw bootstraps the workspace before serving the first usable turn.
 2. **Given** a workspace with an existing persisted assistant session, **When** the operator reconnects through ACP, **Then** StrandsClaw resumes the existing shared workspace session instead of creating an unrelated conversation state.
 3. **Given** a prompt that causes the assistant to inspect workspace files, **When** the turn is served through ACP, **Then** workspace boundary rules and refusal behavior remain unchanged.
+4. **Given** an ACP client disconnects before a final response is delivered, **When** the in-flight turn ends, **Then** the shared workspace session remains at the last completed turn and no partial assistant response is persisted.
 
 ---
 
@@ -108,7 +109,7 @@ A maintainer can add future protocol adapters, such as an OpenAI-compatible endp
 - **FR-004**: The system MUST preserve workspace bootstrap behavior when ACP is the entry point for the first session in a workspace.
 - **FR-005**: The system MUST preserve the current single persisted workspace session behavior when ACP clients reconnect to the same workspace, including when multiple ACP sessions map to that same workspace session.
 - **FR-006**: The system MUST return one final completed assistant response per turn through ACP in a form compatible with normal conversational rendering by a compliant client.
-- **FR-007**: The system MUST surface actionable protocol-compliant error outcomes when model access, workspace bootstrap, or session recovery cannot be completed.
+- **FR-007**: The system MUST surface actionable protocol-compliant error outcomes when model access, including startup while the local model runtime is unavailable, workspace bootstrap, or session recovery cannot be completed.
 - **FR-008**: The system MUST preserve workspace-scoped file access rules and refusal behavior for turns initiated through ACP.
 - **FR-009**: The system MUST define a core interaction contract between the assistant runtime and protocol adapters so future integrations can reuse the same turn-handling behavior.
 - **FR-010**: The system MUST keep protocol-specific transport concerns separate from assistant business rules, persistence rules, and workspace safety rules.
@@ -116,7 +117,7 @@ A maintainer can add future protocol adapters, such as an OpenAI-compatible endp
 - **FR-012**: The system MUST treat streaming output, client-supplied attachments, and expanded client-side session management as out of scope for the first ACP release.
 - **FR-013**: The system MUST allow future protocol adapters, including a potential OpenAI-compatible endpoint, to be added without requiring a redesign of workspace bootstrap, session persistence, or file-scope behavior.
 - **FR-014**: The system MUST treat an OpenAI-compatible endpoint as out of scope for this feature release while preserving the ability to specify it later against the same integration seam.
-- **FR-015**: The system MUST handle ACP session startup when the local model runtime is unavailable by returning actionable outcomes that allow the client operator to recover without corrupting workspace session state.
+- **FR-015**: The system MUST leave the shared workspace session at the last completed turn if an ACP client disconnects before a final response is delivered, and MUST NOT persist a partial assistant response.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -132,7 +133,7 @@ A maintainer can add future protocol adapters, such as an OpenAI-compatible endp
 - **SC-001**: A standard ACP-capable client can connect to StrandsClaw and complete a first successful prompt-response exchange in one setup flow without custom client code.
 - **SC-002**: In acceptance testing, 100% of ACP-started sessions preserve the same workspace bootstrap and workspace-boundary behavior as the native runtime for supported scenarios.
 - **SC-003**: In restart testing for the same workspace, at least 95% of readable persisted sessions are resumed successfully through ACP without creating conflicting conversation state.
-- **SC-004**: Maintainers can describe the supported ACP capability set and the deferred future-protocol scope without ambiguity, with zero undocumented client-visible behaviors in the first release.
+- **SC-004**: The ACP agent contract and quickstart enumerate the supported ACP capability set and deferred future-protocol scope for the first release, and acceptance validation comparing those documents with ACP capability responses and quickstart examples finds zero undocumented client-visible behaviors.
 
 ## Assumptions
 
