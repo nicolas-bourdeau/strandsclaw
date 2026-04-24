@@ -44,6 +44,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ACP bootstrap failed: {exc}", file=sys.stderr)
         return 1
 
+    print(f"Starting StrandsClaw ACP agent in workspace: {config.workspace_root}", file=sys.stderr)
     agent = StrandsClawACPAgent(ctx)
 
     try:
