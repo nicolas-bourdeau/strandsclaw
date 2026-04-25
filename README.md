@@ -78,6 +78,47 @@ Behavior notes:
 - If Ollama or the configured model is unavailable, startup still succeeds and each turn returns an actionable recovery message.
 - File reads are limited to files inside the active workspace boundary, must be text, and must be no larger than 64 KB.
 
+## ACP Adapter
+
+StrandsClaw exposes a standard [Agent Client Protocol (ACP)](https://agentclientprotocol.com/) interface for integration with ACP-capable clients (such as Zed with the [obsidian-agent-client](https://github.com/RAIT-09/obsidian-agent-client) plugin).
+
+### Launch
+
+```bash
+strandsclaw acp --workspace-path /path/to/your/workspace
+```
+
+Or via `uv run`:
+
+```bash
+uv run strandsclaw acp --workspace-path ~/.strandsclaw-workspace
+```
+
+### ACP Capabilities (MVP)
+
+| Capability | Supported |
+|---|---|
+| `session/new` | ✓ |
+| `session/prompt` (text) | ✓ |
+| `session/cancel` | ✓ (best-effort) |
+| `session/load` | ✗ (not advertised) |
+| `session/list` | ✗ (not advertised) |
+| Streaming output | ✗ (final response only) |
+| Attachments / images | ✗ |
+
+### Session and Persistence
+
+- All ACP sessions within one process share a single persisted workspace session.
+- Reconnecting clients reuse existing conversation state through normal session loading.
+- The workspace is resolved once at launch and cannot change during the process lifetime.
+
+### Error Behavior
+
+- Bootstrap or session preparation failures return an actionable error; no turns are accepted for an unprepared workspace.
+- Model unavailability returns an actionable recovery message and preserves the workspace session.
+- Unsupported payloads or capabilities return explicit errors rather than silent degradation.
+
+
 ## Spec Kit Workflow
 
 This repo is already initialized with Spec Kit for GitHub Copilot. Use the generated slash commands in order:

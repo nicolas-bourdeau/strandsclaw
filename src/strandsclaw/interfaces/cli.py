@@ -1,24 +1,33 @@
+"""CLI delivery surface for StrandsClaw.
+
+This module owns only operator-facing argument parsing and command routing.
+All workspace runtime behavior (bootstrap, session, turns) is delegated to
+workspace/chat_runtime.py.
+"""
 from __future__ import annotations
 
 import argparse
 import json
-import urllib.error
-import urllib.request
-from dataclasses import asdict
 
 from strandsclaw.bootstrap.init import BootstrapError, bootstrap_workspace
 from strandsclaw.config import AppConfig, load_config
 from strandsclaw.infrastructure.observability import RuntimeEventLogger
 from strandsclaw.infrastructure.state.file_state_store import FileStateStore
 from strandsclaw.infrastructure.state.session_store import SessionStore
-from strandsclaw.workspace.assistant_assets import get_missing_assistant_files, load_bootstrap_instructions, load_normal_turn_assets
+from strandsclaw.workspace.assistant_assets import (
+    get_missing_assistant_files,
+    load_bootstrap_instructions,
+    load_normal_turn_assets,
+)
+from strandsclaw.workspace.chat_runtime import (
+    ModelUnavailableError,
+    WorkspaceRuntimeContext,
+    execute_turn,
+    prepare_workspace,
+)
 from strandsclaw.workspace.file_tool import collect_file_context, register_workspace_file_read_tool
 from strandsclaw.workspace.prompt_assembly import assemble_normal_turn_prompt
 from strandsclaw.workspace.skill_catalog import SkillCatalog
-
-
-class ModelUnavailableError(RuntimeError):
-    pass
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -35,6 +44,13 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("list-skills", help="List discovered local skills")
     chat = subparsers.add_parser("chat", help="Start the workspace assistant chat runtime")
     chat.add_argument("--prompt", type=str, help="Run a single prompt and exit")
+    acp_sub = subparsers.add_parser("acp", help="Start the workspace assistant ACP adapter over stdio")
+    acp_sub.add_argument(
+        "--workspace-path",
+        dest="acp_workspace_path",
+        type=str,
+        help="Workspace path for the ACP process (overrides global --workspace-path)",
+    )
     return parser
 
 
@@ -76,37 +92,33 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "chat":
         return _run_chat(config, single_prompt=args.prompt)
 
+    if args.command == "acp":
+        from strandsclaw.interfaces.acp import main as acp_main
+        workspace_path = getattr(args, "acp_workspace_path", None) or args.workspace_path
+        return acp_main(["--workspace-path", workspace_path] if workspace_path else [])
+
     parser.error(f"unsupported command: {args.command}")
     return 2
 
 
 def _run_chat(config: AppConfig, single_prompt: str | None) -> int:
-    logger = RuntimeEventLogger()
-    registered_tool = register_workspace_file_read_tool()
-    logger.emit("tool.registered", tool=asdict(registered_tool))
-
-    bootstrap_required = (not config.workspace_root.exists()) or bool(get_missing_assistant_files(config.workspace_root))
+    # Capture bootstrap_required before prepare_workspace runs bootstrap.
+    bootstrap_required = (not config.workspace_root.exists()) or bool(
+        get_missing_assistant_files(config.workspace_root)
+    )
 
     try:
-        created = bootstrap_workspace(config)
+        ctx = prepare_workspace(config)
     except BootstrapError as exc:
         print(f"Bootstrap failed: {exc}")
-        logger.emit("workspace.bootstrap_failed", error=str(exc))
         return 1
 
-    logger.emit("workspace.bootstrap", created=[str(path) for path in created])
     if bootstrap_required:
-        instructions = load_bootstrap_instructions(config.workspace_root)
-        logger.emit("workspace.bootstrap_instructions_loaded", has_instructions=bool(instructions.strip()))
         print(f"workspace> bootstrapped {config.workspace_root}")
 
-    state_store = FileStateStore(config.state_dir)
-    session_store = SessionStore(state_store)
-    session = session_store.load_or_create()
-    logger.emit("session.loaded", message_count=len(session.messages))
-
     if single_prompt is not None:
-        _handle_turn(config, logger, session_store, session, single_prompt)
+        outcome = execute_turn(ctx, single_prompt)
+        print(f"assistant> {outcome.assistant_text}")
         return 0
 
     while True:
@@ -120,76 +132,7 @@ def _run_chat(config: AppConfig, single_prompt: str | None) -> int:
         if user_prompt.lower() in {"quit", "exit"}:
             break
 
-        session = _handle_turn(config, logger, session_store, session, user_prompt)
+        outcome = execute_turn(ctx, user_prompt)
+        print(f"assistant> {outcome.assistant_text}")
 
     return 0
-
-
-def _handle_turn(
-    config: AppConfig,
-    logger: RuntimeEventLogger,
-    session_store: SessionStore,
-    session,
-    user_prompt: str,
-):
-    assets = load_normal_turn_assets(config.workspace_root)
-    file_context, file_result = collect_file_context(config.workspace_root, user_prompt)
-
-    if file_result is not None and file_result.status != "allowed":
-        response = file_result.reason or "Denied: file could not be read."
-        logger.emit(
-            "file.read_denied",
-            requested_path=file_result.requested_path,
-            reason=file_result.reason,
-        )
-    else:
-        if file_result is not None:
-            logger.emit(
-                "file.read_allowed",
-                requested_path=file_result.requested_path,
-                resolved_path=file_result.resolved_path,
-                bytes_read=file_result.bytes_read,
-            )
-
-        prompt = assemble_normal_turn_prompt(assets, user_prompt, file_context=file_context)
-        try:
-            response = _generate_with_ollama(config, prompt)
-            logger.emit("chat.turn_succeeded")
-        except ModelUnavailableError as exc:
-            response = f"Model unavailable: {exc}. Verify Ollama is running and the model is installed."
-            logger.emit("chat.turn_model_unavailable", error=str(exc))
-    print(f"assistant> {response}")
-    updated = session_store.append_turn(session, user_prompt, response)
-    session_store.save(updated)
-    logger.emit("session.saved", message_count=len(updated.messages))
-    return updated
-
-
-def _generate_with_ollama(config: AppConfig, prompt: str) -> str:
-    if config.model_profile.provider != "ollama":
-        raise ModelUnavailableError(f"unsupported provider '{config.model_profile.provider}'")
-
-    request = urllib.request.Request(
-        "http://127.0.0.1:11434/api/generate",
-        data=json.dumps(
-            {
-                "model": config.model_profile.model,
-                "prompt": prompt,
-                "stream": False,
-                "options": {"num_ctx": config.model_profile.context_window},
-            }
-        ).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(request, timeout=20) as response:  # noqa: S310 - local ollama endpoint
-            payload = json.loads(response.read().decode("utf-8"))
-    except (urllib.error.URLError, TimeoutError, OSError) as exc:
-        raise ModelUnavailableError(str(exc)) from exc
-
-    message = str(payload.get("response", "")).strip()
-    if not message:
-        raise ModelUnavailableError("empty response from model runtime")
-    return message
