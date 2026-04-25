@@ -10,7 +10,7 @@
 ## Setup
 
 ```bash
-cd /home/nbourdeau/dev/strandsclaw
+cd /path/to/strandsclaw
 uv sync
 ```
 

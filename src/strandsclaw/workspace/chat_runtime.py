@@ -81,10 +81,7 @@ def prepare_workspace(config: AppConfig) -> WorkspaceRuntimeContext:
         get_missing_assistant_files(config.workspace_root)
     )
 
-    try:
-        created = bootstrap_workspace(config)
-    except BootstrapError:
-        raise
+    created = bootstrap_workspace(config)
 
     logger.emit("workspace.bootstrap", created=[str(p) for p in created])
     if bootstrap_required:
@@ -200,6 +197,7 @@ def _generate_with_ollama(config: AppConfig, prompt: str) -> str:
     )
 
     try:
+        # 120s: large models on slow hardware can take well over 20s for the first token
         with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310 - local ollama endpoint
             payload = json.loads(response.read().decode("utf-8"))
     except (urllib.error.URLError, TimeoutError, OSError) as exc:

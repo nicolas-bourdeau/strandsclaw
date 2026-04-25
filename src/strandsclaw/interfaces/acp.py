@@ -21,7 +21,10 @@ def build_acp_parser() -> argparse.ArgumentParser:
         "--workspace-path",
         type=str,
         required=False,
-        help="Workspace root path for this ACP process",
+        help=(
+            "Workspace root path for this ACP process. "
+            "If omitted, the path is resolved from STRANDSCLAW_WORKSPACE_PATH or the default (~/.strandsclaw-workspace)."
+        ),
     )
     return parser
 

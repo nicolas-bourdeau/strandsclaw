@@ -42,8 +42,7 @@ from strandsclaw.workspace.chat_runtime import WorkspaceRuntimeContext, execute_
 _AGENT_NAME = "strandsclaw"
 _AGENT_VERSION = "0.1.0"
 
-_ERROR_UNSUPPORTED_LOAD_SESSION = -32601  # method not found
-_ERROR_UNSUPPORTED_LIST_SESSIONS = -32601
+_ERROR_METHOD_NOT_FOUND = -32601  # method not found
 _ERROR_UNSUPPORTED_CONTENT = -32602  # invalid params
 
 
@@ -142,7 +141,7 @@ class StrandsClawACPAgent:
     ) -> LoadSessionResponse | None:
         """Not supported in the MVP; raise an explicit error."""
         raise RequestError(
-            code=_ERROR_UNSUPPORTED_LOAD_SESSION,
+            code=_ERROR_METHOD_NOT_FOUND,
             message="session/load is not supported by this agent",
         )
 
@@ -154,9 +153,22 @@ class StrandsClawACPAgent:
     ) -> ListSessionsResponse:
         """Not supported in the MVP; raise an explicit error."""
         raise RequestError(
-            code=_ERROR_UNSUPPORTED_LIST_SESSIONS,
+            code=_ERROR_METHOD_NOT_FOUND,
             message="session/list is not supported by this agent",
         )
+
+    async def cancel(
+        self,
+        session_id: str,
+        turn_id: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        """Best-effort cancel. Turns execute synchronously so this is a no-op.
+
+        The shared workspace session remains valid regardless of whether
+        cancellation arrives before or after response delivery.
+        """
+        self._logger.emit("acp.session.cancel", session_id=session_id, turn_id=turn_id)
 
     async def prompt(
         self,
@@ -173,15 +185,13 @@ class StrandsClawACPAgent:
             )
 
         # Reject non-text content blocks
-        from acp.schema import PromptRequest
-        mock_req = _PromptBlockList(prompt)
-        if has_non_text_blocks(mock_req):
+        if has_non_text_blocks(prompt):
             raise RequestError(
                 code=_ERROR_UNSUPPORTED_CONTENT,
                 message="only text content blocks are supported in the MVP",
             )
 
-        input_text = extract_text_prompt(mock_req)
+        input_text = extract_text_prompt(prompt)
         if not input_text:
             raise RequestError(
                 code=_ERROR_UNSUPPORTED_CONTENT,
@@ -240,16 +250,16 @@ class StrandsClawACPAgent:
         return PromptResponse(stop_reason=stop_reason)
 
     async def set_session_mode(self, mode_id: str, session_id: str, **kwargs: Any) -> None:
-        raise RequestError(code=_ERROR_UNSUPPORTED_LOAD_SESSION, message="set_session_mode is not supported")
+        raise RequestError(code=_ERROR_METHOD_NOT_FOUND, message="set_session_mode is not supported")
 
     async def set_session_model(self, model_id: str, session_id: str, **kwargs: Any) -> None:
-        raise RequestError(code=_ERROR_UNSUPPORTED_LOAD_SESSION, message="set_session_model is not supported")
+        raise RequestError(code=_ERROR_METHOD_NOT_FOUND, message="set_session_model is not supported")
 
     async def set_config_option(self, config_id: str, session_id: str, value: Any, **kwargs: Any) -> None:
-        raise RequestError(code=_ERROR_UNSUPPORTED_LOAD_SESSION, message="set_config_option is not supported")
+        raise RequestError(code=_ERROR_METHOD_NOT_FOUND, message="set_config_option is not supported")
 
     async def authenticate(self, method_id: str, **kwargs: Any) -> None:
-        raise RequestError(code=_ERROR_UNSUPPORTED_LOAD_SESSION, message="authenticate is not supported")
+        raise RequestError(code=_ERROR_METHOD_NOT_FOUND, message="authenticate is not supported")
 
     async def _send_bootstrap_command(self, session_id: str) -> None:
         """Advertise the /bootstrap slash command to the client."""
@@ -329,9 +339,3 @@ class StrandsClawACPAgent:
 
         return f"Workspace initialized at `{self._config.workspace_root}`. You can start chatting now."
 
-
-class _PromptBlockList:
-    """Minimal shim to make ACP mapping helpers work with raw block lists."""
-
-    def __init__(self, prompt: list[Any]) -> None:
-        self.prompt = prompt

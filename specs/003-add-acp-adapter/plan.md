@@ -1,7 +1,7 @@
 # Implementation Plan: ACP Adapter
 
-**Branch**: `003-add-acp-adapter` | **Date**: 2026-04-23 | **Spec**: `/home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/spec.md`
-**Input**: Feature specification from `/home/nbourdeau/dev/strandsclaw/specs/003-add-acp-adapter/spec.md`
+**Branch**: `003-add-acp-adapter` | **Date**: 2026-04-23 | **Spec**: `specs/003-add-acp-adapter/spec.md`
+**Input**: Feature specification from `specs/003-add-acp-adapter/spec.md`
 
 ## Summary
 
