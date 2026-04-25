@@ -73,6 +73,15 @@ class SessionStore:
             },
         )
 
+    def reset(self) -> AssistantSession:
+        """Archive the current session and start a fresh empty one."""
+        raw = self._state_store.read(ACTIVE_SESSION_KEY)
+        if raw is not None:
+            self._archive_unreadable(raw, reason="manual reset")
+        new = _new_session()
+        self.save(new)
+        return new
+
     def _archive_unreadable(self, raw_payload: Any, reason: str) -> None:
         archive_key = f"{ARCHIVE_PREFIX}{datetime.now(tz=UTC).strftime('%Y%m%dT%H%M%SZ')}"
         self._state_store.write(

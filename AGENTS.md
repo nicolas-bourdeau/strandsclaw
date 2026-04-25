@@ -60,3 +60,10 @@ The following are forbidden without explicit plan justification:
 This repository is public: never commit secrets, tokens, passwords, API keys, private keys, or machine-specific absolute paths.
 Prefer portable relative paths and environment-variable-driven configuration over user- or host-specific values.
 Before creating PRs or releases, scan changed files for sensitive data patterns and remove anything unsafe.
+
+## Active Technologies
+- Python >= 3.11 + `strands-agents==1.33.0`, `agent-client-protocol`, `pyyaml>=6.0` (003-add-acp-adapter)
+- Existing file-backed JSON state under workspace `.state/` via `FileStateStore` and `SessionStore` (003-add-acp-adapter)
+
+## Recent Changes
+- 003-add-acp-adapter: Added Python >= 3.11 + `strands-agents==1.33.0`, `agent-client-protocol`, `pyyaml>=6.0`
