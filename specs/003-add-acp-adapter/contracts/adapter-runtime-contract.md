@@ -55,6 +55,17 @@ Defines the internal transport-neutral contract between StrandsClaw runtime beha
   - Cancellation bookkeeping stays outside transport-specific message formatting.
   - No partial persistence write is committed for a cancelled turn.
 
+### Reset Session
+
+- Input:
+  - `protocol_session_id: str`
+- Output:
+  - `AssistantSession` (new empty session)
+- Guarantees:
+  - Archives the current session with reason "manual reset" before creating a new one.
+  - All future turns use the new session.
+  - Useful for `/clear-history` and similar client-driven reset operations.
+
 ## Outcome Semantics
 
 - `completed`: assistant text returned successfully.

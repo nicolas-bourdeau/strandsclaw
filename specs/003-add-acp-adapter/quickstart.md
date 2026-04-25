@@ -81,7 +81,17 @@ Example `agent_servers` entry for an ACP-capable client:
 - Verify optional non-MVP features such as session listing, streaming, and attachments are not advertised.
 - If the client attempts an unsupported operation anyway, verify the outcome is explicit and actionable.
 
-### 5. Model-unavailable turn behavior
+### 5. Slash command functionality
+
+- Launch the ACP agent: `uv run strandsclaw acp --workspace-path /tmp/sc-workspace`.
+- Start a session and send `/list-skills`.
+- Verify the response lists skills from the workspace.
+- Send `/clear-history`.
+- Verify the response confirms clearing and subsequent prompts start a fresh conversation.
+- In a fresh workspace that fails bootstrap, start a session and verify only `/bootstrap` is advertised.
+- Send `/bootstrap` and verify the response indicates successful initialization.
+
+### 6. Model-unavailable turn behavior
 
 - Stop the local model runtime.
 - Launch the ACP agent and start a session.

@@ -200,7 +200,7 @@ def _generate_with_ollama(config: AppConfig, prompt: str) -> str:
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:  # noqa: S310 - local ollama endpoint
+        with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310 - local ollama endpoint
             payload = json.loads(response.read().decode("utf-8"))
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise ModelUnavailableError(str(exc)) from exc

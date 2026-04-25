@@ -470,5 +470,5 @@ def test_each_turn_persists_exactly_one_assistant_message(tmp_path: Path, monkey
     assistant_messages = [m for m in messages if m["role"] == "assistant"]
     assert len(assistant_messages) == 3, f"Expected 3 assistant messages, got {len(assistant_messages)}"
 
-    # Each session_update was called with the correct response text
-    assert mock_conn.session_update.call_count == 3
+    # session_update is called once on new_session (slash commands) + once per prompt turn
+    assert mock_conn.session_update.call_count == 4

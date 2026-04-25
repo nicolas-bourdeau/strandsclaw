@@ -28,7 +28,7 @@ Deliver the first standard protocol integration by exposing StrandsClaw as an AC
 - **Spec-Driven Delivery**: PASS. The spec defines the bounded context, ubiquitous language, invariants, external boundaries, and independently testable stories.
 - **Domain-Driven Boundaries**: PASS. The plan keeps ACP transport glue out of workspace/bootstrap/session rules by introducing an adapter-neutral runtime contract.
 - **Minimal Structure**: PASS. No `domain/`, `application/`, `agents/`, or repository abstractions are introduced; the feature extends existing minimal-core areas only.
-- **Observable Operations**: PASS. ACP capability advertisement, session binding, bootstrap, disconnect handling, turn execution, and persistence behavior remain explicit and testable through deterministic contracts and structured runtime events.
+- **Observable Operations**: PASS. ACP capability advertisement, session binding, bootstrap, disconnect handling, turn execution, slash command dispatch, startup messages to stderr, and persistence behavior remain explicit and testable through deterministic contracts and structured runtime events.
 - **Testable Increments**: PASS. The feature can ship in vertical slices covering runtime extraction, ACP session startup, prompt handling, and unsupported-capability/error behavior.
 - **Invariant Enforcement**: PASS. INV-001..INV-005 map to explicit launch-workspace resolution, shared-session binding, capability advertisement, runtime contract boundaries, and future-adapter compatibility decisions.
 - **Layer Ownership**: PASS. Ownership is explicit across interface launch surfaces, workspace runtime policy, and infrastructure protocol/state adapters.
@@ -123,7 +123,7 @@ tests/
 - **Spec-Driven Delivery**: PASS. The design artifacts align to the feature spec, clarify MVP boundaries, and preserve future-adapter expectations.
 - **Domain-Driven Boundaries**: PASS. ACP transport responsibilities stay in delivery/infrastructure code, while runtime rules stay in adapter-neutral workspace modules.
 - **Minimal Structure**: PASS. The design adds only a focused ACP adapter package and a shared runtime module; `domain/` and `application/` remain unjustified.
-- **Observable Operations**: PASS. Capability advertisement, ACP session binding, disconnect handling, model-unavailable outcomes, and persisted-session reuse are documented as deterministic, inspectable behavior.
+- **Observable Operations**: PASS. Capability advertisement, ACP session binding, disconnect handling, model-unavailable outcomes, slash command dispatch, startup messages to stderr, bootstrap-required mode fallback, and persisted-session reuse are documented as deterministic, inspectable behavior.
 - **Testable Increments**: PASS. Each implementation slice can be validated independently with unit and ACP contract tests.
 - **Invariant Enforcement**: PASS. Every invariant is represented by a planned guard, policy, or capability decision in the design artifacts.
 - **Layer Ownership**: PASS. Module ownership is explicit and avoids placing business rules in ACP glue or state adapters.

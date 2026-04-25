@@ -38,14 +38,15 @@ def main(argv: list[str] | None = None) -> int:
 
     config = load_config(workspace_path=args.workspace_path)
 
+    ctx = None
     try:
         ctx = prepare_workspace(config)
     except BootstrapError as exc:
-        print(f"ACP bootstrap failed: {exc}", file=sys.stderr)
-        return 1
+        print(f"ACP workspace not ready ({exc}); starting in bootstrap-required mode.", file=sys.stderr)
 
-    print(f"Starting StrandsClaw ACP agent in workspace: {config.workspace_root}", file=sys.stderr)
-    agent = StrandsClawACPAgent(ctx)
+    if ctx is not None:
+        print(f"Starting StrandsClaw ACP agent in workspace: {config.workspace_root}", file=sys.stderr)
+    agent = StrandsClawACPAgent(ctx, config=config, log_sink=lambda s: print(s, file=sys.stderr))
 
     try:
         asyncio.run(_run_acp(agent))
