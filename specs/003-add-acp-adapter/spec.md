@@ -14,6 +14,14 @@
 - Q: How should multiple ACP sessions targeting the same workspace behave? → A: All ACP sessions for the same workspace map onto the same shared underlying workspace session.
 - Q: Does the first ACP slice need streaming output? → A: No. A final completed response per turn is sufficient for the first release.
 
+### Session 2026-04-25
+
+- Q: How should the ACP adapter handle connection authentication? → A: No auth required for the first release; localhost trust is sufficient.
+- Q: Which ACP protocol version should the adapter target? → A: Pin to the version declared in pyproject.toml (`agent-client-protocol>=0.9.0`).
+- Q: What observability signals should the ACP adapter emit? → A: Structured log lines only — session start/end, turn request/response, and errors.
+- Q: What is the acceptable turn response latency for the first ACP release? → A: High timeout required — Ollama can be slow; apply a 120-second hard timeout per turn.
+- Q: What should happen to the ACP protocol session when the model is unavailable at session start? → A: Retry model contact up to 3 times before returning a protocol-compliant error and refusing the session.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Connect a Standard ACP Client (Priority: P1)
@@ -63,7 +71,7 @@ A maintainer can add future protocol adapters, such as an OpenAI-compatible endp
 
 ### Edge Cases
 
-- An ACP client connects before the local model runtime is available.
+- An ACP client connects before the local model runtime is available; the adapter retries model contact up to 3 times before returning a protocol-compliant error and refusing the session.
 - An ACP client disconnects during a turn or while a response is still being delivered.
 - The ACP client requests capabilities or session actions that StrandsClaw does not support in the first release of the adapter.
 - Multiple ACP sessions target the same workspace while the MVP still relies on a single shared persisted assistant session.
@@ -113,6 +121,11 @@ A maintainer can add future protocol adapters, such as an OpenAI-compatible endp
 - **FR-008**: The system MUST preserve workspace-scoped file access rules and refusal behavior for turns initiated through ACP.
 - **FR-009**: The system MUST define a core interaction contract between the assistant runtime and protocol adapters so future integrations can reuse the same turn-handling behavior.
 - **FR-010**: The system MUST keep protocol-specific transport concerns separate from assistant business rules, persistence rules, and workspace safety rules.
+- **FR-016**: The first ACP adapter release MUST NOT require any authentication from connecting ACP clients; localhost trust is the assumed security boundary for this release.
+- **FR-017**: The ACP adapter MUST be implemented against the `agent-client-protocol` package version pinned in `pyproject.toml` (currently `>=0.9.0`); compatibility with earlier versions is out of scope.
+- **FR-018**: The ACP adapter MUST emit structured log lines for ACP session start, session end, turn request received, turn response sent, and all error outcomes; OpenTelemetry tracing is out of scope for the first release.
+- **FR-019**: The ACP adapter MUST apply a hard per-turn timeout of 120 seconds to tolerate slow local model runtimes such as Ollama; turns that exceed this limit MUST return a protocol-compliant error response.
+- **FR-020**: When the local model runtime is unavailable at ACP session start, the adapter MUST retry the model health check up to 3 times before returning a protocol-compliant error and refusing to open the session.
 - **FR-011**: The system MUST document that the ACP adapter's first release supports basic chat turns only and treat unsupported capabilities as explicit non-goals rather than undefined behavior.
 - **FR-012**: The system MUST treat streaming output, client-supplied attachments, and expanded client-side session management as out of scope for the first ACP release.
 - **FR-013**: The system MUST allow future protocol adapters, including a potential OpenAI-compatible endpoint, to be added without requiring a redesign of workspace bootstrap, session persistence, or file-scope behavior.
@@ -138,6 +151,7 @@ A maintainer can add future protocol adapters, such as an OpenAI-compatible endp
 ## Assumptions
 
 - The first protocol adapter targets locally launched ACP-capable clients rather than remote multi-tenant gateway scenarios.
+- The local model runtime is Ollama, which may exhibit high response latency; a 120-second per-turn hard timeout is assumed sufficient.
 - The active workspace is chosen when StrandsClaw is launched and is not selected per ACP session.
 - ACP is the only protocol implemented in this feature slice; an OpenAI-compatible endpoint is explicitly deferred.
 - The existing single persisted workspace session remains the governing session model for this feature.
