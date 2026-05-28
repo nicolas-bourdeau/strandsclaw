@@ -13,6 +13,11 @@
 - Q: What user-visible coverage states are required when context loading is partial? -> A: Report each required file as one of: `applied`, `missing`, `unreadable`, `invalid`, or `trimmed`.
 - Q: How should prompt budget limits be defined for requirement clarity? -> A: Context budget is the maximum workspace-context portion allowed per turn and must not exceed the active chat model context window after reserving room for the user turn and response generation.
 
+### Session 2026-04-25
+
+- Q: How should the context budget be expressed? → A: As a percentage of the active model's reported context window (e.g., ≤ 20%), keeping the formula portable across models.
+- Q: How should conflicting guidance across context files be handled? → A: First file in the defined precedence order wins (`AGENTS.md` → `IDENTITY.md` → `SOUL.md`); no merging or runtime conflict resolution.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Ground responses in workspace identity (Priority: P1)
@@ -61,7 +66,7 @@ A workspace owner can rely on chat behavior that prioritizes the most relevant w
 ### Edge Cases
 
 - Workspace contains empty `AGENTS.md`, `IDENTITY.md`, or `SOUL.md` files.
-- File content includes conflicting guidance across the three files.
+- File content includes conflicting guidance across the three files — resolved by precedence order (`AGENTS.md` wins; later files do not override earlier ones).
 - Files contain unexpected formatting, very long lines, or non-text bytes.
 - Files change during an active chat session.
 - Workspace path is valid but context files are inaccessible due to permissions.
@@ -84,7 +89,7 @@ A workspace owner can rely on chat behavior that prioritizes the most relevant w
 ### Domain Invariants
 
 - **INV-001**: Every chat turn MUST attempt to assemble context from the OpenClaw-style set in the active workspace.
-- **INV-002**: `AGENTS.md`, `IDENTITY.md`, and `SOUL.md` MUST be treated as distinct sources with stable ordering in context assembly.
+- **INV-002**: `AGENTS.md`, `IDENTITY.md`, and `SOUL.md` MUST be treated as distinct sources with stable ordering in context assembly. When guidance conflicts, the first file in precedence order (`AGENTS.md` → `IDENTITY.md` → `SOUL.md`) governs; no merging or override is applied.
 - **INV-003**: Missing or unreadable context files MUST NOT block chat; they must degrade gracefully with explicit coverage reporting.
 - **INV-004**: Context assembly MUST remain within a defined budget using deterministic prioritization.
 - **INV-005**: Chat responses MUST be grounded only in the active workspace context and not in unrelated workspace roots.
@@ -103,12 +108,12 @@ A workspace owner can rely on chat behavior that prioritizes the most relevant w
 - **FR-003**: The system MUST include applied context in every chat turn by default.
 - **FR-004**: The system MUST detect context-file changes and apply updated content on subsequent chat turns without requiring workspace reinitialization.
 - **FR-005**: The system MUST continue chat when one or more context files are unavailable and MUST provide a user-facing coverage report for each required file with one of these states: `applied`, `missing`, `unreadable`, `invalid`, or `trimmed`.
-- **FR-006**: The system MUST guard chat context assembly with a defined context budget per turn and deterministic trimming rules.
+- **FR-006**: The system MUST guard chat context assembly with a defined context budget per turn and deterministic trimming rules. The budget MUST be expressed as a configurable percentage of the active model's reported context window (default: ≤ 20%) so the formula is portable across models.
 - **FR-007**: The system MUST preserve the semantic distinction of identity, behavior, and soul guidance while assembling prompt context.
 - **FR-008**: The system MUST expose runtime feedback per turn that identifies which required files were used and which were reduced or skipped due to availability or budget constraints.
 - **FR-009**: The system MUST prevent context loading from escaping the active workspace boundary.
 - **FR-010**: The system MUST document the OpenClaw-inspired context contract for workspace owners, including expected files and fallback behavior.
-- **FR-011**: The system MUST ensure context budget allocation reserves capacity for the full user message and response generation in each turn.
+- **FR-011**: The system MUST ensure the context budget percentage leaves sufficient headroom for the full user message and response generation in each turn (i.e., workspace context may not exceed the configured percentage of the total context window).
 
 ### Key Entities *(include if feature involves data)*
 
